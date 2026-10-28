@@ -9,6 +9,10 @@
 [![Air-Gapped](https://img.shields.io/badge/Privacy-100%25%20Air--Gapped%20Local-emerald.svg)]()
 [![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026%20Week%204-orange.svg)](https://dev.to/challenges/hacktoberfest-week4-2026-10-26)
 
+<p align="center">
+  <img src="hero.jpg" alt="Nocturne Telemetry Archaeology Workstation" width="100%" style="border-radius: 10px;" />
+</p>
+
 ---
 
 ## 🌒 What is Nocturne?
