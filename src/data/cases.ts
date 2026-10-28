@@ -231,11 +231,11 @@ export const FORENSIC_CASES: ForensicCase[] = [
     investigatorNotes: 'Multi-sensor logs revealed an extraordinary localized thermal plunge of 7.2°C isolated exclusively to the Nursery, coupled with an 18.98Hz infrasonic acoustic resonance and sudden deadbolt disengagement.',
     floorplan: {
       rooms: [
-        { id: 'master', name: 'Master Suite', x: 20, y: 30, width: 200, height: 160, sensorIds: ['TH-01', 'PIR-01'] },
-        { id: 'hallway', name: 'Cold Corridor', x: 230, y: 30, width: 80, height: 330, sensorIds: ['PIR-04', 'MIC-02'] },
-        { id: 'nursery', name: 'Nursery (Hot Zone)', x: 320, y: 30, width: 190, height: 160, sensorIds: ['TH-02', 'LATCH-07', 'EMF-03'] },
-        { id: 'study', name: 'Study & Library', x: 20, y: 200, width: 200, height: 160, sensorIds: ['TH-03', 'PIR-02'] },
-        { id: 'basement', name: 'Edge Server Closet', x: 320, y: 200, width: 190, height: 160, sensorIds: ['POW-01', 'TEMP-SRV'] }
+        { id: 'master', name: 'Master Suite', x: 20, y: 25, width: 215, height: 150, sensorIds: ['TH-01', 'PIR-01'] },
+        { id: 'hallway', name: 'Corridor', x: 250, y: 25, width: 85, height: 320, sensorIds: ['PIR-04', 'MIC-02'] },
+        { id: 'nursery', name: 'Nursery (Hot Zone)', x: 350, y: 25, width: 220, height: 150, sensorIds: ['TH-02', 'LATCH-07', 'EMF-03'] },
+        { id: 'study', name: 'Library & Study', x: 20, y: 195, width: 215, height: 150, sensorIds: ['TH-03', 'PIR-02'] },
+        { id: 'basement', name: 'Server Closet', x: 350, y: 195, width: 220, height: 150, sensorIds: ['POW-01', 'TEMP-SRV'] }
       ]
     },
     readings: case0317Readings,
@@ -254,11 +254,11 @@ export const FORENSIC_CASES: ForensicCase[] = [
     investigatorNotes: 'Simultaneous acoustic telemetry in the basement recorded distinct low-frequency vocalization envelopes peaking at 52.5 dB, accompanied by severe magnetic flux reaching 14.35 microTesla.',
     floorplan: {
       rooms: [
-        { id: 'master', name: 'Living Room', x: 20, y: 30, width: 200, height: 160, sensorIds: ['TH-01', 'PIR-01'] },
-        { id: 'hallway', name: 'Central Stairwell', x: 230, y: 30, width: 80, height: 330, sensorIds: ['PIR-04', 'MIC-01'] },
-        { id: 'nursery', name: 'Battery Storage', x: 320, y: 30, width: 190, height: 160, sensorIds: ['BAT-01', 'INV-02'] },
-        { id: 'study', name: 'Guest Room', x: 20, y: 200, width: 200, height: 160, sensorIds: ['TH-03'] },
-        { id: 'basement', name: 'Basement Sub-Panel', x: 320, y: 200, width: 190, height: 160, sensorIds: ['POW-02', 'EMF-03', 'MIC-02'] }
+        { id: 'master', name: 'Living Room', x: 20, y: 25, width: 215, height: 150, sensorIds: ['TH-01', 'PIR-01'] },
+        { id: 'hallway', name: 'Stairwell', x: 250, y: 25, width: 85, height: 320, sensorIds: ['PIR-04', 'MIC-01'] },
+        { id: 'nursery', name: 'Battery Storage', x: 350, y: 25, width: 220, height: 150, sensorIds: ['BAT-01', 'INV-02'] },
+        { id: 'study', name: 'Guest Room', x: 20, y: 195, width: 215, height: 150, sensorIds: ['TH-03'] },
+        { id: 'basement', name: 'Sub-Panel Hub', x: 350, y: 195, width: 220, height: 150, sensorIds: ['POW-02', 'EMF-03', 'MIC-02'] }
       ]
     },
     readings: case0108Readings,
@@ -277,11 +277,11 @@ export const FORENSIC_CASES: ForensicCase[] = [
     investigatorNotes: 'Massless kinetic signature observed for 14 continuous cycles. Thermal imaging recorded a moving column of cold air matching human dimensions, inducing a localized 5.6°C thermal shadow.',
     floorplan: {
       rooms: [
-        { id: 'master', name: 'Primary Suite', x: 20, y: 30, width: 200, height: 160, sensorIds: ['TH-01'] },
-        { id: 'hallway', name: 'Attic Long Corridor', x: 230, y: 30, width: 80, height: 330, sensorIds: ['PIR-01', 'PIR-02', 'PIR-03'] },
-        { id: 'nursery', name: 'West Chamber', x: 320, y: 30, width: 190, height: 160, sensorIds: ['TH-02', 'LOAD-01'] },
-        { id: 'study', name: 'Observatory Study', x: 20, y: 200, width: 200, height: 160, sensorIds: ['EMF-01', 'MIC-01'] },
-        { id: 'basement', name: 'HVAC Plant', x: 320, y: 200, width: 190, height: 160, sensorIds: ['HVAC-01'] }
+        { id: 'master', name: 'Primary Suite', x: 20, y: 25, width: 215, height: 150, sensorIds: ['TH-01'] },
+        { id: 'hallway', name: 'Corridor', x: 250, y: 25, width: 85, height: 320, sensorIds: ['PIR-01', 'PIR-02', 'PIR-03'] },
+        { id: 'nursery', name: 'West Chamber', x: 350, y: 25, width: 220, height: 150, sensorIds: ['TH-02', 'LOAD-01'] },
+        { id: 'study', name: 'Observatory', x: 20, y: 195, width: 215, height: 150, sensorIds: ['EMF-01', 'MIC-01'] },
+        { id: 'basement', name: 'HVAC Plant', x: 350, y: 195, width: 220, height: 150, sensorIds: ['HVAC-01'] }
       ]
     },
     readings: case0442Readings,

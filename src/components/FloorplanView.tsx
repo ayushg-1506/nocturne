@@ -82,7 +82,7 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
         }} />
 
         <svg
-          viewBox="0 0 540 400"
+          viewBox="0 0 590 375"
           style={{ width: '100%', height: '100%', maxHeight: '380px' }}
         >
           {/* Defs for gradients & patterns */}
@@ -143,26 +143,26 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
 
                 {/* Room Name Label */}
                 <text
-                  x={room.x + 8}
-                  y={room.y + 20}
+                  x={room.x + 10}
+                  y={room.y + 22}
                   fill={isHotZone && isColdAnomaly ? 'var(--accent-cyan)' : 'var(--text-secondary)'}
-                  fontSize={room.width < 100 ? "9" : "11"}
+                  fontSize={room.width < 100 ? "10" : "11"}
                   fontWeight="600"
                   fontFamily="var(--font-mono)"
                   letterSpacing="0.04em"
                 >
-                  {(room.width < 100 ? (room.name.includes(' ') ? room.name.split(' ')[1] : room.name) : room.name).toUpperCase()}
+                  {room.name.toUpperCase()}
                 </text>
 
                 {/* Sensor Indicators within room */}
-                <g transform={`translate(${room.x + 8}, ${room.y + 34})`}>
+                <g transform={`translate(${room.x + 10}, ${room.y + 38})`}>
                   {room.sensorIds.map((sid, idx) => (
                     <text
                       key={sid}
                       x={room.width < 100 ? 0 : idx * 56}
-                      y={room.width < 100 ? idx * 14 : 0}
+                      y={room.width < 100 ? idx * 16 : 0}
                       fill="var(--text-dim)"
-                      fontSize="8"
+                      fontSize="9"
                       fontFamily="var(--font-mono)"
                     >
                       [{sid}]
@@ -215,17 +215,17 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
           })}
 
           {/* Door Latch Sensor Icon between rooms */}
-          <g transform="translate(310, 110)">
+          <g transform="translate(340, 95)">
             <circle
               cx="0"
               cy="0"
-              r="12"
+              r="10"
               fill={currentReading.doorLatchState === 'SECURE' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.3)'}
               stroke={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-emerald)' : 'var(--accent-crimson)'}
               strokeWidth="1.5"
             />
             <text
-              x="16"
+              x="14"
               y="4"
               fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-emerald)' : 'var(--accent-crimson)'}
               fontSize="9"

@@ -144,31 +144,35 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
         {/* Anomaly Flag Markers across bottom */}
         <div style={{
           position: 'relative',
-          height: '16px',
+          height: '20px',
           margin: '0 14px',
-          borderTop: '1px solid var(--border-subtle)'
+          borderTop: '1px solid var(--border-subtle)',
+          display: 'flex',
+          alignItems: 'center'
         }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', position: 'absolute', left: '0' }}>
+            FLAGS:
+          </span>
           {anomalies.map(a => {
-            const leftPct = (a.epochMinutes / totalMinutes) * 100;
+            const leftPct = Math.max(8, Math.min(96, (a.epochMinutes / totalMinutes) * 100));
             return (
-              <span
+              <div
                 key={a.id}
-                title={`${a.timestamp}: ${a.summary}`}
+                title={`[${a.timestamp}] ${a.type}: ${a.summary}`}
                 onClick={() => onSeek(a.epochMinutes)}
                 style={{
                   position: 'absolute',
                   left: `${leftPct}%`,
-                  top: '2px',
-                  transform: 'translateX(-50%)',
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  fontFamily: 'var(--font-mono)',
-                  color: a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)',
+                  top: '5px',
+                  transform: 'translateX(-50%) rotate(45deg)',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '1px',
+                  background: a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)',
+                  boxShadow: `0 0 8px ${a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
                   cursor: 'pointer'
                 }}
-              >
-                ▲ [{a.type.split('_')[0]}]
-              </span>
+              />
             );
           })}
         </div>
