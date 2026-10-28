@@ -1,0 +1,109 @@
+{
+  "engine": "NOCTURNE v2.4 (Gemma 2 + TabPFN Protocol)",
+  "analyzed_at": "2026-10-28T23:58:12.293456",
+  "input_file": "sample_telemetry.csv",
+  "anomalies_detected": 7,
+  "dossier": {
+    "executive_summary": "Multivariate nocturnal divergence flagged localized 7.2\u00b0C thermal collapse synchronized with 18.98Hz infrasound wave and unauthenticated solenoid release.",
+    "rational_verdict": {
+      "headline": "HVAC Damper Microclimate Inversion & Plumbing Water-Hammer",
+      "physical_plausibility_pct": 38,
+      "probable_causes": [
+        "Thermal bridging along northwest exterior envelope.",
+        "18.98Hz acoustic harmonic induced by high-pressure pump cavitation.",
+        "Stray RF induction triggering magnetic deadbolt solenoid."
+      ]
+    },
+    "ghost_in_the_machine_verdict": {
+      "headline": "Endothermic Spectral Kinetic Manifestation",
+      "spectral_plausibility_pct": 89,
+      "lore_context": "D\u00eda de los Muertos traditions hold that ancestral or restless spirits extract localized heat energy from the physical environment to interact with kinetic boundaries (doors, locks, air columns)."
+    }
+  },
+  "evidence_timeline": [
+    {
+      "timestamp": "03:12:00",
+      "epoch_index": 24,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.5\u00b0C (drop of 6.7\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:15:00",
+      "epoch_index": 25,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.3\u00b0C (drop of 6.9\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:18:00",
+      "epoch_index": 26,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.5\u00b0C (drop of 6.7\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:21:00",
+      "epoch_index": 27,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.3\u00b0C (drop of 6.9\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:24:00",
+      "epoch_index": 28,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.5\u00b0C (drop of 6.7\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:27:00",
+      "epoch_index": 29,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.3\u00b0C (drop of 6.9\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    },
+    {
+      "timestamp": "03:30:00",
+      "epoch_index": 30,
+      "severity": "CRITICAL",
+      "confidence_score": 0.999,
+      "vectors": [
+        "Thermal Collapse: 14.5\u00b0C (drop of 6.7\u00b0C)",
+        "Infrasound Resonance: 18.98Hz @ 44.5dB (Ghost Frequency)",
+        "Electromagnetic Surge: 7.40 \u00b5T (Baseline: 0.28 \u00b5T)",
+        "Ghost Load Surge: +1182W on isolated circuit"
+      ]
+    }
+  ]
+}
