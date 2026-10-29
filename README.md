@@ -1,5 +1,8 @@
 # NOCTURNE: Air-Gapped Environmental Telemetry Forensics & Anomaly Reasoning Engine
 
+> **Live Production Workstation:** [https://nocturne-nb2y.onrender.com](https://nocturne-nb2y.onrender.com)  
+> **Source Repository:** [https://github.com/ayushg-1506/nocturne](https://github.com/ayushg-1506/nocturne)
+
 NOCTURNE is a local-first, air-gapped environmental telemetry forensics platform engineered to investigate anomalous microclimate and electrical deviations across residential and facility IoT sensor networks. 
 
 By combining tabular foundation model statistical scoring (TabPFN) with open-weight deductive reasoning (Google Gemma 2), Nocturne processes multi-variate nocturnal time-series to determine causality: differentiating between mechanical system failures (e.g., HVAC damper collapse, unshielded induction transients) and unclassified anomalous environmental phenomena.
@@ -8,7 +11,7 @@ By combining tabular foundation model statistical scoring (TabPFN) with open-wei
 
 ## Technical Specifications & Architecture
 
-- **Air-Gapped Privacy:** 100% client-side execution. Sensitive domestic sensor logs (occupancy, bedroom microclimates, portal access states) are analyzed locally without transmitting telemetry to cloud vendors.
+- **Air-Gapped Privacy:** 100% client-side execution. Sensitive domestic sensor logs (occupancy, bedroom microclimates, portal access states) are analyzed locally without transmitting telemetry to third-party cloud vendors.
 - **Tabular Foundation Scoring (TabPFN):** Multi-variate z-score and Bayesian tabular inference across ambient temperature, acoustic sound pressure level (SPL), resonant frequency, PIR motion, electromagnetic flux (EMF), and circuit wattage.
 - **Open-Weight Deductive Reasoning (Gemma 2):** Generates dual-verdict causal hypotheses (Rational Physical Hypothesis vs Anomalous Phenomenon Deduction) sealed with a SHA-256 evidence checksum.
 - **Infrasonic Resonant Analysis:** Synthesizes and isolates the 18.98 Hz acoustic band (the Vic Tandy human ocular resonant frequency responsible for inducing optical illusions and involuntary autonomic dread).
@@ -43,10 +46,21 @@ By combining tabular foundation model statistical scoring (TabPFN) with open-wei
 |                                         |                                          |
 |                                         v                                          |
 |                   [SHA-256 Tamper-Evident Evidence Seal]                           |
-|                   [Interactive Workstation: http://localhost:5173]                 |
+|                   [Interactive Workstation: https://nocturne-nb2y.onrender.com]    |
 |                                                                                    |
 +------------------------------------------------------------------------------------+
 ```
+
+---
+
+## Workstation Views & Operational Sections
+
+1. **[01] Spatial Radar & Floorplan Matrix:** Real-time 2D SVG architectural floor plan displaying room microclimates, thermal collapse boundaries, centered dynamic door latch telemetry, and live multi-sensor badges.
+2. **[02] Telemetry Streams & Waveform Lab:** Synchronized multi-channel oscillograms covering Ambient Temperature, Acoustic SPL / Frequency, EMF Induction Flux, and Circuit Active Power.
+3. **[03] Incident Dossiers & Forensic Audit:** Cryptographically sealed dossiers featuring dual-verdict causal divergence, sensory signature breakdowns, and a 6-phase chronological audit log with SHA-256 evidence validation.
+4. **[04] Spectral Lab & Oscilloscope:** Real-time CRT oscilloscope visualizer rendering high-fidelity waveforms and 18.98 Hz acoustic resonance harmonic isolation.
+5. **[05] Data Ingest & Simulation Lab:** Synthetic anomaly injection engine allowing operators to inject flash cold drops, infrasound spikes, phantom wattage surges, and zero-token lock cycles into live streams, alongside custom CSV file ingestion.
+6. **[06] System Configuration:** Local AI endpoint adapter configuration (Ollama, local vLLM, or air-gapped heuristic reasoning).
 
 ---
 
@@ -56,31 +70,30 @@ By combining tabular foundation model statistical scoring (TabPFN) with open-wei
 nocturne/
 ├── src/
 │   ├── components/
-│   │   ├── Header.tsx              # System status bar & runtime selector
-│   │   ├── ExecutiveBriefing.tsx   # Operational specification & causality HUD
-│   │   ├── SensorStatusStrip.tsx   # Real-time multi-sensor KPI metrics
-│   │   ├── TimeScrubber.tsx        # Chronological playback controller
-│   │   ├── NavigationTabs.tsx      # Segmented terminal navigation
-│   │   ├── FloorplanView.tsx       # SVG architectural telemetry matrix
-│   │   ├── TelemetryLabView.tsx    # Waveform channels & raw data table
-│   │   ├── TelemetryCharts.tsx     # Synchronized SVG waveform channels
-│   │   ├── SpectralScope.tsx       # Real-time CRT oscilloscope (18.98 Hz)
-│   │   ├── DossierView.tsx         # Classified incident dossier & SHA-256 seal
+│   │   ├── TopBar.tsx              # System header & global telemetry ribbon
+│   │   ├── Sidebar.tsx             # High-contrast tactical navigation sidebar
+│   │   ├── OverviewSection.tsx     # Operational briefing & primary spatial workspace
+│   │   ├── FloorplanView.tsx       # SVG architectural matrix with dynamic latch badges
+│   │   ├── TelemetryLabView.tsx    # Multi-channel waveform streams & raw data table
+│   │   ├── TelemetryCharts.tsx     # Synchronized SVG time-series waveforms
+│   │   ├── DossierView.tsx         # Classified incident dossier with SHA-256 evidence seal
+│   │   ├── SpectralScope.tsx       # Full-width CRT oscilloscope & acoustic analysis
 │   │   ├── SimulationLabView.tsx   # Synthetic anomaly injection & CSV ingestion
-│   │   └── SettingsModal.tsx       # AI engine & endpoint configuration
+│   │   ├── TimeScrubber.tsx        # Chronological playback controller
+│   │   └── SettingsModal.tsx       # Local AI runtime configuration modal
 │   ├── engine/
 │   │   ├── anomalyDetector.ts      # TabPFN-style tabular statistical scoring
-│   │   ├── audioSynthesizer.ts     # Web Audio API procedural acoustics
+│   │   ├── audioSynthesizer.ts     # Web Audio API procedural acoustic generator
 │   │   └── gemmaForensics.ts       # Gemma 2 deductive dual-verdict engine
 │   ├── data/
-│   │   └── cases.ts                # Pre-loaded multi-variate incident cases
+│   │   └── cases.ts                # Multi-variate nocturnal telemetry incident datasets
 │   ├── types/
-│   │   └── telemetry.ts            # TypeScript interfaces and telemetry models
-│   ├── App.tsx                     # Main forensic workstation entry point
-│   ├── index.css                   # Phosphor green / tactical amber terminal styling
-│   └── main.tsx                    # React DOM bootstrap
+│   │   └── telemetry.ts            # TypeScript interfaces and forensic models
+│   ├── App.tsx                     # Master workstation layout & state management
+│   ├── index.css                   # Obsidian black & tactical phosphor design system
+│   └── main.tsx                    # React 19 application entry point
 ├── nocturne_forensics.py           # Standalone Python CLI forensic utility
-├── sample_telemetry.csv            # Sample multi-variate sensor input
+├── sample_telemetry.csv            # Sample multi-variate nocturnal telemetry
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
@@ -90,7 +103,7 @@ nocturne/
 
 ## Installation & Quickstart
 
-### 1. Web Workstation (React + TypeScript + Vite)
+### 1. Web Workstation (React 19 + TypeScript + Vite)
 
 Ensure Node.js (v18+) is installed:
 
@@ -106,7 +119,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser.
+Open `http://localhost:5173` in your browser, or visit the live deployment at [https://nocturne-nb2y.onrender.com](https://nocturne-nb2y.onrender.com).
 
 ### 2. Standalone Python CLI Engine
 
@@ -125,13 +138,13 @@ python3 nocturne_forensics.py --csv sample_telemetry.csv --provider ollama --mod
 
 ---
 
-## Core Capabilities
+## Core Forensic Capabilities
 
 ### 1. Architectural Telemetry Matrix
 - Real-time 2D spatial rendering of monitored rooms and facilities.
 - Dynamic thermal mapping: tracks localized microclimate collapses and temperature drop boundaries.
 - Optical motion tracking: correlates passive infrared (PIR) triggers against structural vibration sensors to detect massless kinetic pacing.
-- Monitored portal deadbolt states (`SECURE`, `AJAR`, `UNLATCHED`).
+- Monitored portal deadbolt states (`SECURE`, `AJAR`, `UNLATCHED`) with dynamic SVG boundary containment.
 
 ### 2. Multi-Spectral Waveform Channels
 - **Channel 01: Ambient Temperature:** Threshold detection for rapid thermal collapse (>3.5°C drop in <180s).
@@ -161,15 +174,15 @@ python3 nocturne_forensics.py --csv sample_telemetry.csv --provider ollama --mod
 
 ---
 
-## Verification & Testing
+## Production Verification
 
-To compile the TypeScript project and generate the production bundle:
+To verify TypeScript types and build the production bundle:
 
 ```bash
 npm run build
 ```
 
-Production assets will be emitted to `dist/index.html` and `dist/assets/`.
+Production assets are compiled to `dist/index.html` and `dist/assets/`.
 
 ---
 
