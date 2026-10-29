@@ -258,35 +258,69 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
             );
           })}
 
-          {/* Door Latch Sensor Graphic: Positioned cleanly between Master Suite and Corridor */}
-          <g transform="translate(245, 145)">
-            <rect
-              x="-6"
-              y="-10"
-              width="95"
-              height="20"
-              rx="2"
-              fill="#0d0f14"
-              stroke={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green)' : 'var(--accent-crimson)'}
-              strokeWidth="1"
-            />
-            <circle
-              cx="4"
-              cy="0"
-              r="4"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)'}
-            />
-            <text
-              x="14"
-              y="3.5"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)'}
-              fontSize="9"
-              fontFamily="var(--font-mono)"
-              fontWeight="700"
-            >
-              LATCH: {currentReading.doorLatchState}
-            </text>
-          </g>
+          {/* Door Latch Sensor Graphic: Dynamically sized & centered so text never overflows */}
+          {(() => {
+            const latchState = currentReading.doorLatchState;
+            const isSecure = latchState === 'SECURE';
+            const isAjar = latchState === 'AJAR';
+            const strokeColor = isSecure
+              ? 'var(--accent-green)'
+              : isAjar
+              ? 'var(--accent-amber)'
+              : 'var(--accent-crimson)';
+            const fillColor = isSecure
+              ? 'var(--accent-green-bright)'
+              : isAjar
+              ? 'var(--accent-amber-bright)'
+              : 'var(--accent-crimson-bright)';
+
+            // Dynamically scale width to guarantee ample right padding in all states
+            const badgeW =
+              latchState === 'UNLATCHED'
+                ? 124
+                : latchState === 'CYCLING'
+                ? 114
+                : latchState === 'SECURE'
+                ? 106
+                : 96;
+            const badgeH = 20;
+            // Corridor midpoint is 292.5 (x: 250 to 335)
+            const centerX = 292.5;
+            const centerY = 145;
+
+            return (
+              <g transform={`translate(${centerX}, ${centerY})`}>
+                <rect
+                  x={-badgeW / 2}
+                  y={-badgeH / 2}
+                  width={badgeW}
+                  height={badgeH}
+                  rx="2"
+                  fill="#0a0c10"
+                  stroke={strokeColor}
+                  strokeWidth="1.2"
+                />
+                <circle
+                  cx={-badgeW / 2 + 10}
+                  cy="0"
+                  r="3.5"
+                  fill={fillColor}
+                  className={!isSecure ? 'pulse-crimson' : undefined}
+                />
+                <text
+                  x={-badgeW / 2 + 20}
+                  y="3.5"
+                  fill={fillColor}
+                  fontSize="8.5"
+                  fontFamily="var(--font-mono)"
+                  fontWeight="700"
+                  letterSpacing="0.03em"
+                >
+                  LATCH: {latchState}
+                </text>
+              </g>
+            );
+          })()}
         </svg>
       </div>
 
