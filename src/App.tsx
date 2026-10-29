@@ -59,41 +59,41 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (!isPlaying) return;
 
-    const intervalMs = Math.max(50, 400 / playbackSpeed);
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       setCurrentMinute(prev => {
         if (prev >= totalMinutes) {
           setIsPlaying(false);
-          return 0;
+          return totalMinutes;
         }
         return prev + 1;
       });
-    }, intervalMs);
+    }, 1000 / playbackSpeed);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, [isPlaying, playbackSpeed, totalMinutes]);
 
-  // Audio effect triggers when entering anomaly window
+  // Audio synthesizer update
   useEffect(() => {
-    if (isAudioOn && activeAnomaly) {
-      if (activeAnomaly.type === 'INFRASOUND_RESONANCE' || currentReading.acousticFreqHz < 20.0) {
+    if (isAudioOn) {
+      if (currentReading.acousticFreqHz >= 18.0 && currentReading.acousticFreqHz <= 20.0) {
         AudioSynthesizer.triggerInfrasound(true, currentReading.acousticFreqHz);
+      } else {
+        AudioSynthesizer.triggerInfrasound(false);
       }
-      if (activeAnomaly.type === 'ELECTROMAGNETIC_SURGE' || currentReading.emfFluxUtd > 4.0) {
+      if (currentReading.emfFluxUtd > 3.0) {
         AudioSynthesizer.triggerEmfPulse();
       }
-    } else if (isAudioOn && !activeAnomaly) {
-      AudioSynthesizer.triggerInfrasound(false);
     }
-  }, [isAudioOn, activeAnomaly, currentReading]);
+  }, [currentReading, isAudioOn]);
 
   const handleToggleAudio = () => {
     const active = AudioSynthesizer.toggleAudio();
     setIsAudioOn(active);
   };
 
-  const handleSeek = (min: number) => {
-    setCurrentMinute(Math.max(0, Math.min(totalMinutes, min)));
+
+  const handleSeek = (minute: number) => {
+    setCurrentMinute(minute);
   };
 
   const handleJumpAnomaly = (direction: 'next' | 'prev') => {
@@ -103,98 +103,72 @@ export const App: React.FC = () => {
       if (next) setCurrentMinute(next.epochMinutes);
       else if (sorted.length > 0) setCurrentMinute(sorted[0].epochMinutes);
     } else {
-      const prevList = sorted.filter(a => a.epochMinutes < currentMinute - 2);
-      if (prevList.length > 0) setCurrentMinute(prevList[prevList.length - 1].epochMinutes);
+      const prev = [...sorted].reverse().find(a => a.epochMinutes < currentMinute - 2);
+      if (prev) setCurrentMinute(prev.epochMinutes);
       else if (sorted.length > 0) setCurrentMinute(sorted[sorted.length - 1].epochMinutes);
     }
   };
 
-  // Synthetic anomaly injection
   const handleInjectEvent = (type: 'cold' | 'infrasound' | 'surge' | 'latch' | 'convergence') => {
-    const targetMin = currentMinute;
-    const hours = (22 + Math.floor(targetMin / 60)) % 24;
-    const mins = targetMin % 60;
-    const tsStr = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`;
-
-    const updatedReadings = activeCase.readings.map(r => {
-      if (Math.abs(r.epochMinutes - targetMin) <= 6) {
+    const modifiedReadings = activeCase.readings.map(r => {
+      if (Math.abs(r.epochMinutes - currentMinute) <= 4) {
         return {
           ...r,
-          temperatureC: type === 'cold' || type === 'convergence' ? parseFloat((r.temperatureC - 7.0).toFixed(1)) : r.temperatureC,
-          acousticDb: type === 'infrasound' || type === 'convergence' ? parseFloat((r.acousticDb + 26.0).toFixed(1)) : r.acousticDb,
+          temperatureC: type === 'cold' || type === 'convergence' ? 14.1 : r.temperatureC,
+          acousticDb: type === 'infrasound' || type === 'convergence' ? 44.5 : r.acousticDb,
           acousticFreqHz: type === 'infrasound' || type === 'convergence' ? 18.98 : r.acousticFreqHz,
-          emfFluxUtd: type === 'surge' || type === 'convergence' ? parseFloat((r.emfFluxUtd + 9.5).toFixed(2)) : r.emfFluxUtd,
-          powerWattage: type === 'surge' || type === 'convergence' ? parseFloat((r.powerWattage + 1850).toFixed(1)) : r.powerWattage,
-          pirMotion: true,
-          pirRoom: 'Monitored Zone',
-          doorLatchState: (type === 'latch' || type === 'convergence' ? 'UNLATCHED' : r.doorLatchState) as any
+          powerWattage: type === 'surge' || type === 'convergence' ? 2450.0 : r.powerWattage,
+          doorLatchState: type === 'latch' || type === 'convergence' ? ('UNLATCHED' as const) : r.doorLatchState,
+          emfFluxUtd: type === 'convergence' ? 7.85 : r.emfFluxUtd
         };
       }
       return r;
     });
 
-    const newAnomaly = {
-      id: `injected-${Date.now()}`,
-      timestamp: tsStr,
-      epochMinutes: targetMin,
-      type: (type === 'convergence' ? 'CONVERGENCE_EVENT' : type === 'cold' ? 'THERMAL_COLLAPSE' : type === 'infrasound' ? 'INFRASOUND_RESONANCE' : type === 'surge' ? 'GHOST_LOAD_SURGE' : 'PORTAL_CYCLING') as any,
-      severity: 'CRITICAL' as const,
-      room: 'Monitored Sensor Array',
-      confidenceScore: 0.994,
-      summary: `Manual Injected Disturbance (${type.toUpperCase()}): Simulated 3:00 AM environmental departure.`,
-      sensorDivergence: [
-        { channel: 'Temperature Vector', baseline: `${baselineTemp.toFixed(1)}°C`, observed: `${(baselineTemp - 7.0).toFixed(1)}°C`, delta: '-7.0°C' },
-        { channel: 'Acoustic SPL', baseline: '22.0 dB', observed: '48.0 dB (18.98Hz)', delta: '+26.0 dB' },
-        { channel: 'EMF Induction', baseline: '0.25 µT', observed: '9.75 µT', delta: '+9.50 µT' }
-      ]
-    };
+    const updatedCases = cases.map(c => {
+      if (c.id === activeCase.id) {
+        return {
+          ...c,
+          readings: modifiedReadings
+        };
+      }
+      return c;
+    });
 
-    const updatedCase = {
-      ...activeCase,
-      readings: updatedReadings,
-      anomalies: [newAnomaly, ...activeCase.anomalies]
-    };
-
-    setCases(prev => prev.map(c => c.id === activeCase.id ? updatedCase : c));
-    setActiveTab('overview');
-    if (isAudioOn) {
-      AudioSynthesizer.triggerEmfPulse();
-      AudioSynthesizer.triggerInfrasound(true, 18.98);
-    }
+    setCases(updatedCases);
   };
 
   const handleImportCase = (newCase: ForensicCase) => {
     setCases(prev => [newCase, ...prev]);
     setSelectedCaseId(newCase.id);
-    setCurrentMinute(newCase.anomalies[0]?.epochMinutes || 0);
+    setCurrentMinute(newCase.readings[0].epochMinutes);
     setActiveTab('overview');
   };
 
-  const getProviderDisplayName = () => {
-    if (modelConfig.provider === 'built-in') return 'GEMMA 2 (LOCAL) + TABPFN';
-    if (modelConfig.provider === 'gemini') return 'GEMINI / GEMMA (GOOGLE AI)';
-    if (modelConfig.provider === 'ollama') return 'LOCAL OLLAMA (PORT 11434)';
-    return 'CUSTOM INFERENCE';
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-deep)' }}>
-      {/* 1. Header Navigation Bar */}
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      background: 'var(--bg-deep)',
+      color: 'var(--text-primary)'
+    }}>
+      {/* 1. Header Command Ribbon */}
       <Header
         cases={cases}
         selectedCaseId={selectedCaseId}
-        onSelectCase={(id) => {
-          setSelectedCaseId(id);
-          const found = cases.find(c => c.id === id);
-          if (found && found.anomalies.length > 0) {
-            setCurrentMinute(found.anomalies[0].epochMinutes - 4);
-          }
-        }}
+        onSelectCase={setSelectedCaseId}
         isAudioOn={isAudioOn}
         onToggleAudio={handleToggleAudio}
         onOpenSettings={() => setIsSettingsOpen(true)}
         activeAnomalyCount={activeCase.anomalies.length}
-        modelProviderName={getProviderDisplayName()}
+        modelProviderName={
+          modelConfig.provider === 'built-in' 
+            ? 'GEMMA-2 (LOCAL AIR-GAPPED)' 
+            : modelConfig.provider === 'ollama'
+            ? 'GEMMA-2 (OLLAMA :11434)'
+            : 'GEMINI FLASH (AI STUDIO)'
+        }
       />
 
       {/* 2. Executive System Briefing Banner */}
@@ -230,44 +204,48 @@ export const App: React.FC = () => {
       {/* 6. Active Tab Content Viewport */}
       <main style={{
         flex: 1,
-        padding: '0 16px 16px 16px'
+        padding: '0 16px 14px 16px'
       }}>
         {/* TAB 1: SPATIAL RADAR & INCIDENT OVERVIEW */}
         {activeTab === 'overview' && (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'minmax(340px, 1.15fr) minmax(320px, 0.85fr)',
-            gap: '16px',
+            gap: '12px',
             alignItems: 'stretch'
           }}>
-            {/* Left: 2.5D Architectural Blueprint */}
+            {/* Left: Architectural Blueprint */}
             <div>
               <FloorplanView
-                forensicCase={activeCase}
+                rooms={activeCase.floorplan.rooms}
                 currentReading={currentReading}
                 selectedRoomId={selectedRoomId}
                 onSelectRoom={setSelectedRoomId}
+                buildingName={activeCase.structureType}
               />
             </div>
 
             {/* Right: Active Anomaly Incident Panel */}
-            <div className="glass-panel" style={{
-              padding: '20px',
+            <div style={{
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-subtle)',
+              borderLeft: activeAnomaly ? '3px solid var(--accent-amber)' : '3px solid var(--accent-green)',
+              borderRadius: '2px',
+              padding: '16px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '14px',
-              borderLeft: activeAnomaly ? '4px solid var(--accent-crimson)' : '4px solid var(--accent-cyan)'
+              gap: '12px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Layers size={17} color={activeAnomaly ? 'var(--accent-crimson)' : 'var(--accent-cyan)'} />
-                  <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                  <Layers size={15} color={activeAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)'} />
+                  <span className="terminal-title">
                     {activeAnomaly ? 'ACTIVE ANOMALOUS INCIDENT' : 'CALM NOCTURNAL BASELINE MONITOR'}
-                  </h3>
+                  </span>
                 </div>
 
                 {activeAnomaly && (
-                  <span className="badge badge-crimson">
+                  <span className="badge-amber" style={{ fontSize: '10px' }}>
                     TABPFN CONFIDENCE: {(activeAnomaly.confidenceScore * 100).toFixed(1)}%
                   </span>
                 )}
@@ -275,26 +253,25 @@ export const App: React.FC = () => {
 
               {activeAnomaly ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-primary)' }}>
                     {activeAnomaly.summary}
                   </div>
 
                   {/* Sensor Divergence Table */}
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
                       MULTIVARIATE DIVERGENCE VECTORS:
-                    </span>
+                    </div>
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                      gap: '8px',
-                      marginTop: '6px'
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                      gap: '6px'
                     }}>
                       {activeAnomaly.sensorDivergence.map((div, idx) => (
                         <div key={idx} style={{
-                          background: 'rgba(0, 0, 0, 0.45)',
-                          padding: '8px 10px',
-                          borderRadius: '6px',
+                          background: '#040804',
+                          padding: '6px 8px',
+                          borderRadius: '2px',
                           border: '1px solid var(--border-subtle)',
                           fontSize: '11px',
                           fontFamily: 'var(--font-mono)'
@@ -302,7 +279,7 @@ export const App: React.FC = () => {
                           <div style={{ color: 'var(--text-muted)' }}>{div.channel}</div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
                             <span style={{ color: 'var(--text-secondary)' }}>BASE: {div.baseline}</span>
-                            <span style={{ color: 'var(--accent-crimson)', fontWeight: 700 }}>OBS: {div.observed}</span>
+                            <span style={{ color: 'var(--accent-amber-bright)', fontWeight: 700 }}>OBS: {div.observed}</span>
                           </div>
                         </div>
                       ))}
@@ -310,33 +287,41 @@ export const App: React.FC = () => {
                   </div>
 
                   {/* Quick CTAs */}
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
                     <button
                       onClick={() => setActiveTab('dossier')}
                       className="btn-primary"
-                      style={{ flex: 1, padding: '8px 16px', justifyContent: 'center' }}
+                      style={{ flex: 1, padding: '6px 12px', fontSize: '11px' }}
                     >
-                      <FileText size={15} />
-                      <span>OPEN AI FORENSIC DOSSIER</span>
+                      <FileText size={13} />
+                      <span>[ OPEN AI FORENSIC DOSSIER ]</span>
                     </button>
 
                     <button
                       onClick={() => setActiveTab('oscilloscope')}
                       className="btn-secondary"
-                      style={{ padding: '8px 14px' }}
+                      style={{ padding: '6px 12px', fontSize: '11px' }}
                     >
-                      <span>INSPECT 18.98Hz WAVE</span>
-                      <ArrowRight size={14} />
+                      <span>[ INSPECT 18.98Hz WAVE ]</span>
+                      <ArrowRight size={13} />
                     </button>
                   </div>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                     All sensor telemetry currently operating within 1.5 standard deviations of domestic baseline.
                   </p>
-                  <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-subtle)', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    💡 <strong>Quick Navigation Tip:</strong> Drag the time scrubber to <strong>03:14 AM (Case #0317)</strong> or <strong>00:44 AM (Case #0108)</strong> to enter the anomalous hot zones, or switch tabs above for waveform curves, sound synthesis, and full AI dossiers.
+                  <div style={{
+                    background: '#040804',
+                    padding: '10px 12px',
+                    borderRadius: '2px',
+                    border: '1px solid var(--border-subtle)',
+                    fontSize: '11px',
+                    color: 'var(--text-secondary)',
+                    fontFamily: 'var(--font-mono)'
+                  }}>
+                    [TIP] Navigation: Drag the timeline scrubber to <strong>03:14 (Case #0317)</strong> or <strong>00:44 (Case #0108)</strong> to enter anomalous hot zones.
                   </div>
                 </div>
               )}
@@ -355,9 +340,9 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* TAB 3: SPECTRAL OSCILLOSCOPE & 18.98HZ EVP */}
+        {/* TAB 3: SPECTRAL OSCILLOSCOPE & 18.98HZ */}
         {activeTab === 'oscilloscope' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1fr) minmax(320px, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1fr) minmax(320px, 1fr)', gap: '12px' }}>
             <div>
               <SpectralScope
                 currentReading={currentReading}
@@ -366,31 +351,45 @@ export const App: React.FC = () => {
               />
             </div>
 
-            <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Cpu size={18} color="var(--accent-violet)" />
-                <h3 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-                  THE 18.98Hz "GHOST FREQUENCY" SCIENTIFIC DOSSIER
-                </h3>
+            <div style={{
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '2px',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Cpu size={15} color="var(--accent-amber-bright)" />
+                <span className="terminal-title">
+                  VIC TANDY 18.98Hz OCULAR RESONANCE ANALYSIS
+                </span>
               </div>
 
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                <p style={{ marginBottom: '10px' }}>
-                  In 1998, British engineer Vic Tandy discovered that an extractor fan in his medical laboratory was producing an imperceptible acoustic resonance at <strong>18.98 Hz</strong>. 
+              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                <p style={{ marginBottom: '8px' }}>
+                  In 1998, British engineer Vic Tandy discovered that an extractor fan in a laboratory produced an acoustic standing wave at <strong>18.98 Hz</strong>. 
                 </p>
-                <p style={{ marginBottom: '10px' }}>
-                  The human eyeball's natural resonant frequency is approximately <strong>18.9 Hz</strong>. Exposure to sound waves at this specific frequency vibrates the eyeball cornea, creating optical displacement illusions (shadowy gray figures appearing in peripheral vision), accompanied by autonomic dread, hyperventilation, and localized chills.
+                <p style={{ marginBottom: '8px' }}>
+                  The human eyeball's resonant frequency is approximately <strong>18.9 Hz</strong>. Infrasonic acoustic waves at this frequency vibrate the eyeball cornea, inducing optical displacement illusions (shadowy peripheral vision artifacts), accompanied by hyperventilation and localized chills.
                 </p>
                 <p>
-                  Nocturne's acoustic module isolates this band from ambient noise to determine whether "sightings" correspond to structural pipe vibration, or anomalous environmental manifestations.
+                  Nocturne's acoustic pipeline isolates this frequency from background noise to determine whether sightings correspond to structural pipe vibration, or unclassified environmental anomalies.
                 </p>
               </div>
 
-              <div style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-subtle)', marginTop: 'auto' }}>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
+              <div style={{
+                background: '#040804',
+                padding: '10px 12px',
+                borderRadius: '2px',
+                border: '1px solid var(--border-subtle)',
+                marginTop: 'auto'
+              }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>
                   CURRENT ACOUSTIC SPECTRUM READING:
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: '#d8b4fe', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
                   {currentReading.acousticFreqHz.toFixed(2)} Hz @ {currentReading.acousticDb.toFixed(1)} dB
                 </div>
               </div>
@@ -420,33 +419,33 @@ export const App: React.FC = () => {
 
       {/* Footer */}
       <footer style={{
-        margin: '0 16px 14px 16px',
-        padding: '12px 18px',
+        margin: '0 16px 12px 16px',
+        padding: '10px 14px',
         borderTop: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '12px',
+        gap: '10px',
         fontSize: '11px',
         color: 'var(--text-muted)',
         fontFamily: 'var(--font-mono)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShieldCheck size={14} color="var(--accent-emerald)" />
-          <span>NOCTURNE // 100% AIR-GAPPED PRIVACY-FIRST TELEMETRY ARCHAEOLOGY</span>
+          <ShieldCheck size={14} color="var(--accent-green-bright)" />
+          <span>NOCTURNE // AIR-GAPPED ENVIRONMENTAL TELEMETRY FORENSICS ENGINE</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span>HACKTOBERFEST 2026: GHOST IN THE MACHINE</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <span>PIPELINE: TABPFN FOUNDATION ANOMALY SCORING + GOOGLE GEMMA 2</span>
           <a
             href="https://github.com/ayushg-1506/nocturne"
             target="_blank"
             rel="noreferrer"
-            style={{ color: 'var(--accent-cyan)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+            style={{ color: 'var(--accent-green-bright)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
           >
-            <GitBranch size={13} />
-            <span>GitHub Repository</span>
+            <GitBranch size={12} />
+            <span>[ GITHUB REPO ]</span>
           </a>
         </div>
       </footer>

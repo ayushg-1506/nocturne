@@ -1,11 +1,11 @@
 import React from 'react';
 import { 
-  Radio, 
+  Terminal, 
   Volume2, 
   VolumeX, 
-  Sparkles, 
-  Settings, 
-  ShieldAlert
+  SlidersHorizontal,
+  AlertTriangle,
+  Cpu
 } from 'lucide-react';
 import type { ForensicCase } from '../types/telemetry';
 
@@ -31,135 +31,157 @@ export const Header: React.FC<HeaderProps> = ({
   modelProviderName
 }) => {
   return (
-    <header className="glass-panel" style={{
-      margin: '12px 16px 8px 16px',
-      padding: '12px 20px',
+    <header style={{
+      margin: '10px 16px 8px 16px',
+      padding: '12px 16px',
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: '2px',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
-      gap: '14px',
-      borderBottom: '1px solid var(--border-subtle)'
+      flexDirection: 'column',
+      gap: '10px'
     }}>
-      {/* Brand & Project Identity */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div style={{
-          position: 'relative',
-          width: '38px',
-          height: '38px',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(168, 85, 247, 0.2) 100%)',
-          border: '1px solid rgba(56, 189, 248, 0.4)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0
-        }}>
-          <Radio size={20} color="var(--accent-cyan)" />
-          <span className="status-ping cyan" style={{ position: 'absolute', top: '-2px', right: '-2px' }} />
+      {/* Top Banner: Logo & Controls */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        {/* Terminal Title Identity */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            background: 'rgba(34, 197, 94, 0.12)',
+            border: '1px solid var(--accent-green)',
+            borderRadius: '2px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <Terminal size={18} color="var(--accent-green-bright)" />
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                letterSpacing: '0.12em',
+                color: 'var(--accent-green-bright)',
+                fontFamily: 'var(--font-mono)'
+              }}>
+                NOCTURNE
+              </span>
+              <span className="badge-green" style={{ fontSize: '10px', padding: '1px 6px' }}>
+                v2.4 AIR-GAPPED
+              </span>
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>
+              ENVIRONMENTAL TELEMETRY FORENSICS &amp; REASONING ENGINE
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h1 style={{
-              fontSize: '18px',
-              fontWeight: 800,
-              letterSpacing: '0.08em',
-              color: 'var(--text-primary)',
-              fontFamily: 'var(--font-mono)'
-            }}>
-              NOCTURNE
-            </h1>
-            <span className="badge badge-cyan" style={{ fontSize: '10px' }}>
-              v2.4 AIR-GAPPED
-            </span>
+        {/* Right Action Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {/* Case Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>CASE:</span>
+            <select
+              value={selectedCaseId}
+              onChange={(e) => onSelectCase(e.target.value)}
+              style={{
+                maxWidth: '300px',
+                background: '#040804',
+                borderColor: 'var(--border-subtle)',
+                color: 'var(--text-primary)',
+                fontSize: '11px'
+              }}
+            >
+              {cases.map((c) => (
+                <option key={c.id} value={c.id}>
+                  [{c.caseNumber}] {c.title}
+                </option>
+              ))}
+            </select>
           </div>
-          <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-            Nocturnal Telemetry Archaeology &amp; Environmental Anomaly Forensics
-          </p>
+
+          {/* AI Engine Tag */}
+          <button
+            onClick={onOpenSettings}
+            className="btn-secondary"
+            title="Configure AI Provider Runtime"
+            style={{ fontSize: '11px', padding: '5px 10px' }}
+          >
+            <Cpu size={13} color="var(--accent-green)" />
+            <span>{modelProviderName}</span>
+          </button>
+
+          {/* Anomaly Badge */}
+          {activeAnomalyCount > 0 && (
+            <div className="badge-crimson" style={{ fontSize: '11px', padding: '4px 8px' }}>
+              <AlertTriangle size={12} />
+              <span>{activeAnomalyCount} ANOMALIES</span>
+            </div>
+          )}
+
+          {/* Audio Synthesizer */}
+          <button
+            onClick={onToggleAudio}
+            className={isAudioOn ? "btn-primary" : "btn-secondary"}
+            style={{ fontSize: '11px', padding: '5px 10px' }}
+            title="Toggle Web Audio Procedural Synthesizer"
+          >
+            {isAudioOn ? <Volume2 size={13} /> : <VolumeX size={13} />}
+            <span>{isAudioOn ? "[ AUDIO: ON ]" : "[ AUDIO: OFF ]"}</span>
+          </button>
+
+          {/* Settings */}
+          <button
+            onClick={onOpenSettings}
+            className="btn-secondary"
+            style={{ padding: '5px 8px' }}
+            title="Settings"
+          >
+            <SlidersHorizontal size={13} />
+          </button>
         </div>
       </div>
 
-      {/* Case File Selector & Indicators */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-        {/* Case Dropdown */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-            CASE:
+      {/* Terminal Status Ribbon (Inspired by CAKTUS header) */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '5px 10px',
+        background: '#040804',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '2px',
+        fontSize: '11px',
+        fontFamily: 'var(--font-mono)',
+        color: 'var(--text-muted)',
+        flexWrap: 'wrap',
+        gap: '10px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ color: 'var(--accent-green-bright)', fontWeight: 700 }} className="pulse-green">
+            * SYSTEM ONLINE
           </span>
-          <select
-            value={selectedCaseId}
-            onChange={(e) => onSelectCase(e.target.value)}
-            style={{
-              background: 'rgba(15, 23, 42, 0.9)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '6px',
-              padding: '6px 12px',
-              fontSize: '12px',
-              fontFamily: 'var(--font-mono)',
-              cursor: 'pointer',
-              outline: 'none',
-              maxWidth: '320px'
-            }}
-          >
-            {cases.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.caseNumber} — {c.title}
-              </option>
-            ))}
-          </select>
+          <span>|</span>
+          <span>AIR-GAPPED LOCAL: <strong style={{ color: 'var(--text-secondary)' }}>TRUE</strong></span>
+          <span>|</span>
+          <span>CASES LOADED: <strong style={{ color: 'var(--text-secondary)' }}>{cases.length}</strong></span>
         </div>
 
-        {/* Model Engine Tag */}
-        <div 
-          onClick={onOpenSettings}
-          title="Click to configure AI providers (Gemma 2 / TabPFN / Groq / Ollama)"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'rgba(168, 85, 247, 0.12)',
-            border: '1px solid rgba(168, 85, 247, 0.35)',
-            borderRadius: '6px',
-            padding: '6px 10px',
-            cursor: 'pointer'
-          }}
-        >
-          <Sparkles size={13} color="var(--accent-violet)" />
-          <span style={{ fontSize: '11px', fontWeight: 600, color: '#d8b4fe', fontFamily: 'var(--font-mono)' }}>
-            {modelProviderName}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span>PIPELINE: <strong style={{ color: 'var(--accent-amber-bright)' }}>TABPFN + GEMMA-2</strong></span>
+          <span>|</span>
+          <span>PORT: <strong style={{ color: 'var(--text-secondary)' }}>5173</strong></span>
         </div>
-
-        {/* Anomaly Counter Badge */}
-        {activeAnomalyCount > 0 && (
-          <div className="badge badge-crimson" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 8px' }}>
-            <ShieldAlert size={12} />
-            <span>{activeAnomalyCount} ANOMALIES</span>
-          </div>
-        )}
-
-        {/* Procedural Audio Toggle */}
-        <button
-          onClick={onToggleAudio}
-          className={`btn-secondary ${isAudioOn ? 'badge-cyan' : ''}`}
-          style={{ padding: '6px 12px' }}
-          title={isAudioOn ? "Mute Nocturnal Room Sound & 18.98Hz Monitor" : "Enable Ambient Audio & Infrasound Monitor"}
-        >
-          {isAudioOn ? <Volume2 size={15} color="var(--accent-cyan)" /> : <VolumeX size={15} />}
-          <span style={{ fontSize: '11px', fontWeight: 600 }}>{isAudioOn ? "AUDIO: ON" : "AUDIO: OFF"}</span>
-        </button>
-
-        {/* Settings */}
-        <button
-          onClick={onOpenSettings}
-          className="btn-secondary"
-          style={{ padding: '6px 10px' }}
-          title="Configure Model Runtime"
-        >
-          <Settings size={15} />
-        </button>
       </div>
     </header>
   );

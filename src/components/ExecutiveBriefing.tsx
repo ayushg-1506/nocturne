@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { Info, ChevronDown, ChevronUp, Shield, Cpu, Layers } from 'lucide-react';
+import { ChevronDown, ChevronUp, Terminal, ShieldCheck, Cpu, Database } from 'lucide-react';
 
 export const ExecutiveBriefing: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
 
   return (
-    <div className="glass-panel" style={{
-      margin: '0 16px 12px 16px',
-      padding: '12px 18px',
-      borderLeft: '4px solid var(--accent-cyan)'
+    <div style={{
+      margin: '0 16px 10px 16px',
+      padding: '10px 14px',
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderLeft: '3px solid var(--accent-green)',
+      borderRadius: '2px'
     }}>
       <div style={{
         display: 'flex',
@@ -16,67 +19,62 @@ export const ExecutiveBriefing: React.FC = () => {
         justifyContent: 'space-between',
         cursor: 'pointer'
       }} onClick={() => setIsExpanded(!isExpanded)}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Info size={17} color="var(--accent-cyan)" />
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontSize: '13px', fontWeight: 800, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
-                SYSTEM BRIEFING: WHAT IS NOCTURNE &amp; HOW TO OPERATE
-              </h2>
-              <span className="badge badge-cyan" style={{ fontSize: '9px' }}>
-                HACKTOBERFEST 2026: GHOST IN THE MACHINE
-              </span>
-            </div>
-            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Air-gapped environmental telemetry archaeology powered by TabPFN tabular anomaly detection &amp; Google Gemma 2 dual-verdict reasoning.
-            </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Terminal size={15} color="var(--accent-green-bright)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span className="terminal-title" style={{ fontSize: '12px' }}>
+              SYSTEM OVERVIEW &amp; ANOMALY REASONING SPECIFICATION
+            </span>
+            <span className="badge-green" style={{ fontSize: '9px', padding: '1px 6px' }}>
+              LOCAL-FIRST AIR-GAPPED
+            </span>
           </div>
         </div>
 
         <button style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
         </button>
       </div>
 
       {isExpanded && (
         <div style={{
-          marginTop: '12px',
-          paddingTop: '12px',
+          marginTop: '10px',
+          paddingTop: '10px',
           borderTop: '1px solid var(--border-subtle)',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '14px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '10px',
           fontSize: '11px',
           color: 'var(--text-secondary)',
           lineHeight: 1.5
         }}>
           {/* Card 1 */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)', fontWeight: 700, marginBottom: '4px' }}>
-              <Shield size={14} /> 1. The Real Problem It Solves
+          <div className="terminal-box" style={{ padding: '8px 10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-green-bright)', fontWeight: 700, marginBottom: '3px' }}>
+              <ShieldCheck size={13} /> [01] CAUSALITY &amp; PRIVACY
             </div>
-            <p>
-              Smart homes record gigabytes of silent telemetry. When a 3:17 AM cold drop or unlatched deadbolt occurs, Nocturne analyzes whether it was an HVAC failure or a spectral anomaly—100% locally without sending your home data to cloud servers.
+            <p style={{ color: 'var(--text-secondary)' }}>
+              IoT microclimate sensors generate continuous nocturnal time-series. When overnight anomalies occur (unprompted 7.2°C temperature drops, deadbolt cycles, phantom wattage spikes), Nocturne isolates causality locally without streaming sensor telemetry to cloud servers.
             </p>
           </div>
 
           {/* Card 2 */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-violet)', fontWeight: 700, marginBottom: '4px' }}>
-              <Cpu size={14} /> 2. TabPFN &amp; Gemma 2 AI Pipeline
+          <div className="terminal-box" style={{ padding: '8px 10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-amber-bright)', fontWeight: 700, marginBottom: '3px' }}>
+              <Cpu size={13} /> [02] DUAL-TIER INFERENCE ENGINE
             </div>
-            <p>
-              <strong>TabPFN</strong> foundation scoring scans multi-sensor time-series for multivariate statistical divergence. <strong>Google Gemma 2</strong> then reviews the incident to produce a balanced, side-by-side Dual Verdict (Engineering vs Día de los Muertos Lore).
+            <p style={{ color: 'var(--text-secondary)' }}>
+              Multi-variate telemetry streams are scored through <strong>TabPFN</strong> tabular foundation models for statistical divergence, then evaluated by <strong>Google Gemma 2</strong> (running locally or offline) to produce dual-verdict hypotheses (Mechanical Failure vs Environmental Phenomenon).
             </p>
           </div>
 
           {/* Card 3 */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-amber)', fontWeight: 700, marginBottom: '4px' }}>
-              <Layers size={14} /> 3. Categorized Tabs
+          <div className="terminal-box" style={{ padding: '8px 10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-green-bright)', fontWeight: 700, marginBottom: '3px' }}>
+              <Database size={13} /> [03] CRYPTOGRAPHIC EVIDENCE SEAL
             </div>
-            <p>
-              Use the tabs above to explore: <strong>Spatial Radar</strong> for the floorplan; <strong>Multi-Spectral Telemetry</strong> for waveform channels; <strong>Oscilloscope</strong> for the 18.98Hz ghost frequency; and <strong>AI Dossier</strong> for the full investigation report.
+            <p style={{ color: 'var(--text-secondary)' }}>
+              All captured anomalous events are timestamped, audited across acoustic, electromagnetic, and spatial sensor axes, and sealed with a tamper-evident <strong>SHA-256</strong> chain-of-custody checksum for verifiable forensic export.
             </p>
           </div>
         </div>

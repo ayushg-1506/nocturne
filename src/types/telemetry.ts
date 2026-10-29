@@ -39,6 +39,16 @@ export interface DetectedAnomaly {
   }[];
 }
 
+export interface RoomCoordinate {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  sensorIds: string[];
+}
+
 export interface ForensicCase {
   id: string;
   caseNumber: string;
@@ -51,15 +61,7 @@ export interface ForensicCase {
   description: string;
   investigatorNotes: string;
   floorplan: {
-    rooms: {
-      id: string;
-      name: string;
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      sensorIds: string[];
-    }[];
+    rooms: RoomCoordinate[];
   };
   readings: SensorReading[];
   anomalies: DetectedAnomaly[];

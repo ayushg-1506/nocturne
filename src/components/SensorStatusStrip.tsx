@@ -21,102 +21,187 @@ export const SensorStatusStrip: React.FC<SensorStatusStripProps> = ({
 
   return (
     <div style={{
-      margin: '0 16px 12px 16px',
+      margin: '0 16px 10px 16px',
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-      gap: '10px'
+      gap: '8px'
     }}>
       {/* 1. Temperature */}
-      <div className="glass-panel" style={{
-        padding: '10px 14px',
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: `1px solid ${isColdAnomaly ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+        borderLeft: isColdAnomaly ? '3px solid var(--accent-amber)' : '3px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        borderLeft: isColdAnomaly ? '3px solid var(--accent-cyan)' : '1px solid var(--border-subtle)'
+        gap: '10px'
       }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Thermometer size={16} color="var(--accent-cyan)" />
+        <div style={{
+          width: '28px',
+          height: '28px',
+          background: isColdAnomaly ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '2px',
+          flexShrink: 0
+        }}>
+          <Thermometer size={15} color={isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
         </div>
         <div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>AMBIENT TEMP</div>
-          <div style={{ fontSize: '15px', fontWeight: 800, color: isColdAnomaly ? 'var(--accent-cyan)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-            {currentReading.temperatureC.toFixed(1)}°C <span style={{ fontSize: '10px', color: tempDelta < 0 ? 'var(--accent-cyan)' : 'var(--text-muted)' }}>({tempDelta > 0 ? '+' : ''}{tempDelta.toFixed(1)}°)</span>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [CH-01] AMBIENT TEMP
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {currentReading.temperatureC.toFixed(1)}°C{' '}
+            <span style={{ fontSize: '10px', color: isColdAnomaly ? 'var(--accent-amber)' : 'var(--text-muted)' }}>
+              ({tempDelta > 0 ? '+' : ''}{tempDelta.toFixed(1)}°)
+            </span>
           </div>
         </div>
       </div>
 
       {/* 2. Acoustic */}
-      <div className="glass-panel" style={{
-        padding: '10px 14px',
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: `1px solid ${isInfrasonic ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+        borderLeft: isInfrasonic ? '3px solid var(--accent-amber)' : '3px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        borderLeft: isInfrasonic ? '3px solid var(--accent-violet)' : '1px solid var(--border-subtle)'
+        gap: '10px'
       }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(168, 85, 247, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Mic size={16} color="var(--accent-violet)" />
+        <div style={{
+          width: '28px',
+          height: '28px',
+          background: isInfrasonic ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '2px',
+          flexShrink: 0
+        }}>
+          <Mic size={15} color={isInfrasonic ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
         </div>
         <div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ACOUSTIC SPL &amp; FREQ</div>
-          <div style={{ fontSize: '15px', fontWeight: 800, color: isInfrasonic ? '#d8b4fe' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-            {currentReading.acousticDb.toFixed(1)} dB <span style={{ fontSize: '10px', color: isInfrasonic ? 'var(--accent-crimson)' : 'var(--text-muted)' }}>({currentReading.acousticFreqHz.toFixed(1)}Hz)</span>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [CH-02] ACOUSTIC / INFRASOUND
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: isInfrasonic ? 'var(--accent-amber-bright)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {currentReading.acousticDb.toFixed(1)} dB{' '}
+            <span style={{ fontSize: '10px', color: isInfrasonic ? 'var(--accent-crimson)' : 'var(--text-muted)' }}>
+              ({currentReading.acousticFreqHz.toFixed(1)}Hz)
+            </span>
           </div>
         </div>
       </div>
 
       {/* 3. EMF Flux */}
-      <div className="glass-panel" style={{
-        padding: '10px 14px',
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: `1px solid ${isEmfAnomaly ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+        borderLeft: isEmfAnomaly ? '3px solid var(--accent-amber)' : '3px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        borderLeft: isEmfAnomaly ? '3px solid var(--accent-amber)' : '1px solid var(--border-subtle)'
+        gap: '10px'
       }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Zap size={16} color="var(--accent-amber)" />
+        <div style={{
+          width: '28px',
+          height: '28px',
+          background: isEmfAnomaly ? 'rgba(245, 158, 11, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '2px',
+          flexShrink: 0
+        }}>
+          <Zap size={15} color={isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
         </div>
         <div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>EMF INDUCTION FLUX</div>
-          <div style={{ fontSize: '15px', fontWeight: 800, color: isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-            {currentReading.emfFluxUtd.toFixed(2)} µT <span style={{ fontSize: '10px', color: isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-muted)' }}>(Nom: 0.28)</span>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [CH-03] EMF INDUCTION
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {currentReading.emfFluxUtd.toFixed(2)} µT{' '}
+            <span style={{ fontSize: '10px', color: isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-muted)' }}>
+              (Nom: 0.28)
+            </span>
           </div>
         </div>
       </div>
 
       {/* 4. Phantom Power */}
-      <div className="glass-panel" style={{
-        padding: '10px 14px',
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: `1px solid ${isWattSurge ? 'var(--accent-crimson)' : 'var(--border-subtle)'}`,
+        borderLeft: isWattSurge ? '3px solid var(--accent-crimson)' : '3px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        borderLeft: isWattSurge ? '3px solid var(--accent-crimson)' : '1px solid var(--border-subtle)'
+        gap: '10px'
       }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: 'rgba(244, 63, 94, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Cpu size={16} color="var(--accent-crimson)" />
+        <div style={{
+          width: '28px',
+          height: '28px',
+          background: isWattSurge ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '2px',
+          flexShrink: 0
+        }}>
+          <Cpu size={15} color={isWattSurge ? 'var(--accent-crimson-bright)' : 'var(--accent-green)'} />
         </div>
         <div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>CIRCUIT POWER</div>
-          <div style={{ fontSize: '15px', fontWeight: 800, color: isWattSurge ? 'var(--accent-crimson)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-            {currentReading.powerWattage.toFixed(0)} W <span style={{ fontSize: '10px', color: isWattSurge ? 'var(--accent-crimson)' : 'var(--text-muted)' }}>{isWattSurge ? '(GHOST LOAD)' : '(IDLE)'}</span>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [CH-04] CIRCUIT WATTAGE
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: isWattSurge ? 'var(--accent-crimson-bright)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+            {currentReading.powerWattage.toFixed(0)} W{' '}
+            <span style={{ fontSize: '10px', color: isWattSurge ? 'var(--accent-crimson)' : 'var(--text-muted)' }}>
+              {isWattSurge ? '[SURGE]' : '[IDLE]'}
+            </span>
           </div>
         </div>
       </div>
 
       {/* 5. Portal Latch */}
-      <div className="glass-panel" style={{
-        padding: '10px 14px',
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: `1px solid ${isUnlatched ? 'var(--accent-crimson)' : 'var(--border-subtle)'}`,
+        borderLeft: isUnlatched ? '3px solid var(--accent-crimson)' : '3px solid var(--accent-green)',
+        borderRadius: '2px',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
-        borderLeft: isUnlatched ? '3px solid var(--accent-crimson)' : '1px solid var(--accent-emerald)'
+        gap: '10px'
       }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: isUnlatched ? 'rgba(244, 63, 94, 0.15)' : 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {isUnlatched ? <Unlock size={16} color="var(--accent-crimson)" /> : <Lock size={16} color="var(--accent-emerald)" />}
+        <div style={{
+          width: '28px',
+          height: '28px',
+          background: isUnlatched ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '2px',
+          flexShrink: 0
+        }}>
+          {isUnlatched ? <Unlock size={15} color="var(--accent-crimson-bright)" /> : <Lock size={15} color="var(--accent-green-bright)" />}
         </div>
         <div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>MONITORED PORTAL</div>
-          <div style={{ fontSize: '15px', fontWeight: 800, color: isUnlatched ? 'var(--accent-crimson)' : 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
-            {currentReading.doorLatchState} <span style={{ fontSize: '10px', color: isUnlatched ? 'var(--accent-crimson)' : 'var(--accent-emerald)' }}>{isUnlatched ? '(!)' : '(SECURE)'}</span>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            [CH-05] MONITORED PORTAL
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: isUnlatched ? 'var(--accent-crimson-bright)' : 'var(--accent-green-bright)', fontFamily: 'var(--font-mono)' }}>
+            {currentReading.doorLatchState}{' '}
+            <span style={{ fontSize: '10px', color: isUnlatched ? 'var(--accent-crimson)' : 'var(--accent-green)' }}>
+              {isUnlatched ? '[BREACH]' : '[LOCKED]'}
+            </span>
           </div>
         </div>
       </div>

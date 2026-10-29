@@ -1,167 +1,164 @@
 import React from 'react';
-import type { ForensicCase, SensorReading } from '../types/telemetry';
-import { Thermometer, Zap, Mic, Lock, Unlock } from 'lucide-react';
+import type { RoomCoordinate, SensorReading } from '../types/telemetry';
+import { Thermometer, Mic, Zap, Lock, Unlock } from 'lucide-react';
 
 interface FloorplanViewProps {
-  forensicCase: ForensicCase;
+  rooms: RoomCoordinate[];
   currentReading: SensorReading;
   selectedRoomId: string | null;
   onSelectRoom: (roomId: string) => void;
+  buildingName: string;
 }
 
 export const FloorplanView: React.FC<FloorplanViewProps> = ({
-  forensicCase,
+  rooms,
   currentReading,
   selectedRoomId,
-  onSelectRoom
+  onSelectRoom,
+  buildingName
 }) => {
-  const rooms = forensicCase.floorplan.rooms;
-
-  // Determine room thermal status based on current reading
   const isColdAnomaly = currentReading.temperatureC < 16.0;
   const isEmfAnomaly = currentReading.emfFluxUtd > 3.0;
 
   return (
-    <div className="glass-panel" style={{
+    <div style={{
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: '2px',
       padding: '16px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
-      height: '100%'
+      gap: '12px'
     }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Blueprint Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>
+            <span className="terminal-title">
               ARCHITECTURAL TELEMETRY MATRIX
-            </h2>
-            <span className="badge badge-cyan" style={{ fontSize: '10px' }}>
-              LIVE SPATIAL GRID
+            </span>
+            <span className="badge-green" style={{ fontSize: '9px', padding: '1px 6px' }}>
+              SPATIAL GRID
             </span>
           </div>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-            {forensicCase.structureType} — {forensicCase.location}
-          </p>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+            {buildingName}
+          </div>
         </div>
 
-        {/* Live Legend */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-cyan)' }}>
-            <span className="status-ping cyan" /> NOMINAL
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-amber)' }}>
-            <span className="status-ping amber" /> THERMAL DRIFT
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-crimson)' }}>
-            <span className="status-ping crimson" /> BREACH / HOT ZONE
-          </span>
+        {/* Legend */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', background: 'var(--accent-green)', borderRadius: '1px' }} />
+            <span>NOMINAL</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', background: 'var(--accent-amber)', borderRadius: '1px' }} />
+            <span>THERMAL DRIFT</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', background: 'var(--accent-crimson)', borderRadius: '1px' }} />
+            <span>BREACH / HOT ZONE</span>
+          </div>
         </div>
       </div>
 
-      {/* SVG Blueprint Canvas */}
+      {/* SVG Interactive Architectural Canvas */}
       <div style={{
         position: 'relative',
         width: '100%',
-        minHeight: '340px',
-        background: 'rgba(5, 8, 12, 0.85)',
+        minHeight: '360px',
+        background: '#040804',
         border: '1px solid var(--border-subtle)',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        borderRadius: '2px',
+        overflow: 'hidden'
       }}>
-        {/* Subtle grid pattern background */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'radial-gradient(circle, rgba(56, 189, 248, 0.08) 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-          pointerEvents: 'none'
-        }} />
-
         <svg
-          viewBox="0 0 590 375"
-          style={{ width: '100%', height: '100%', maxHeight: '380px' }}
+          viewBox="0 0 560 340"
+          style={{ width: '100%', height: '100%', display: 'block' }}
         >
-          {/* Defs for gradients & patterns */}
+          {/* Subtle Terminal Grid Pattern */}
           <defs>
-            <linearGradient id="coldDropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(56, 189, 248, 0.35)" />
-              <stop offset="100%" stopColor="rgba(168, 85, 247, 0.25)" />
+            <pattern id="termGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34, 197, 94, 0.05)" strokeWidth="0.8" />
+            </pattern>
+            <linearGradient id="termNominal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#081408" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
             </linearGradient>
-            <linearGradient id="nominalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(15, 23, 42, 0.7)" />
-              <stop offset="100%" stopColor="rgba(10, 15, 25, 0.8)" />
+            <linearGradient id="termCold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
+              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
             </linearGradient>
-            <linearGradient id="alertGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(244, 63, 94, 0.35)" />
-              <stop offset="100%" stopColor="rgba(245, 158, 11, 0.25)" />
+            <linearGradient id="termAlert" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(239, 68, 68, 0.25)" />
+              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
             </linearGradient>
           </defs>
 
-          {/* Render Architectural Rooms */}
+          <rect width="100%" height="100%" fill="url(#termGrid)" />
+
+          {/* Rooms */}
           {rooms.map((room) => {
             const isSelected = selectedRoomId === room.id;
             const isMotionHere = currentReading.pirMotion && (currentReading.pirRoom === room.name || currentReading.pirRoom?.includes(room.id));
             const isHotZone = room.name.toLowerCase().includes('hot zone') || room.name.toLowerCase().includes('nursery') || room.name.toLowerCase().includes('basement');
 
-            let fillStyle = 'url(#nominalGrad)';
-            let strokeColor = 'rgba(255, 255, 255, 0.12)';
+            let fillStyle = 'url(#termNominal)';
+            let strokeColor = 'var(--border-subtle)';
 
             if (isColdAnomaly && isHotZone) {
-              fillStyle = 'url(#coldDropGrad)';
-              strokeColor = 'var(--accent-cyan)';
+              fillStyle = 'url(#termCold)';
+              strokeColor = 'var(--accent-amber)';
             } else if (isMotionHere) {
-              fillStyle = 'url(#alertGrad)';
+              fillStyle = 'url(#termAlert)';
               strokeColor = 'var(--accent-crimson)';
             }
 
             if (isSelected) {
-              strokeColor = 'var(--accent-cyan)';
+              strokeColor = 'var(--accent-green-bright)';
             }
 
             return (
               <g
                 key={room.id}
                 onClick={() => onSelectRoom(room.id)}
-                style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
               >
-                {/* Room Boundary Rect */}
+                {/* Room Boundary */}
                 <rect
                   x={room.x}
                   y={room.y}
                   width={room.width}
                   height={room.height}
-                  rx="6"
+                  rx="2"
                   fill={fillStyle}
                   stroke={strokeColor}
                   strokeWidth={isSelected ? '2' : '1'}
                   strokeDasharray={isSelected ? '4 2' : 'none'}
                 />
 
-                {/* Room Name Label */}
+                {/* Room Label */}
                 <text
                   x={room.x + 10}
-                  y={room.y + 22}
-                  fill={isHotZone && isColdAnomaly ? 'var(--accent-cyan)' : 'var(--text-secondary)'}
-                  fontSize={room.width < 100 ? "10" : "11"}
-                  fontWeight="600"
+                  y={room.y + 20}
+                  fill={isHotZone && isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)'}
+                  fontSize={room.width < 100 ? "9" : "11"}
+                  fontWeight="700"
                   fontFamily="var(--font-mono)"
                   letterSpacing="0.04em"
                 >
                   {room.name.toUpperCase()}
                 </text>
 
-                {/* Sensor Indicators within room */}
-                <g transform={`translate(${room.x + 10}, ${room.y + 38})`}>
-                  {room.sensorIds.map((sid, idx) => (
+                {/* Sensor tags within room */}
+                <g transform={`translate(${room.x + 10}, ${room.y + 36})`}>
+                  {room.sensorIds.map((sid: string, idx: number) => (
                     <text
                       key={sid}
                       x={room.width < 100 ? 0 : idx * 56}
                       y={room.width < 100 ? idx * 16 : 0}
-                      fill="var(--text-dim)"
+                      fill="var(--text-muted)"
                       fontSize="9"
                       fontFamily="var(--font-mono)"
                     >
@@ -170,15 +167,15 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                   ))}
                 </g>
 
-                {/* Visual Cold Spot / Spectral Plume Ring */}
+                {/* Anomaly Plume Ring */}
                 {isColdAnomaly && isHotZone && (
                   <circle
                     cx={room.x + room.width / 2}
                     cy={room.y + room.height / 2}
                     r={Math.min(room.width, room.height) * 0.35}
-                    fill="rgba(56, 189, 248, 0.15)"
-                    stroke="var(--accent-cyan)"
-                    strokeWidth="1.5"
+                    fill="rgba(245, 158, 11, 0.12)"
+                    stroke="var(--accent-amber)"
+                    strokeWidth="1.2"
                     strokeDasharray="3 3"
                   >
                     <animate
@@ -189,24 +186,24 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                     />
                     <animate
                       attributeName="opacity"
-                      values="0.4;0.8;0.4"
+                      values="0.3;0.7;0.3"
                       dur="3s"
                       repeatCount="indefinite"
                     />
                   </circle>
                 )}
 
-                {/* Motion Ripple Animation when PIR active */}
+                {/* Motion Ripple Animation */}
                 {isMotionHere && (
                   <circle
                     cx={room.x + room.width / 2}
                     cy={room.y + room.height / 2}
                     r="15"
-                    fill="rgba(244, 63, 94, 0.2)"
+                    fill="rgba(239, 68, 68, 0.2)"
                     stroke="var(--accent-crimson)"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                   >
-                    <animate attributeName="r" values="10;45" dur="1.2s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="8;40" dur="1.2s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="1;0" dur="1.2s" repeatCount="indefinite" />
                   </circle>
                 )}
@@ -219,15 +216,15 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
             <circle
               cx="0"
               cy="0"
-              r="10"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.3)'}
-              stroke={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-emerald)' : 'var(--accent-crimson)'}
-              strokeWidth="1.5"
+              r="8"
+              fill={currentReading.doorLatchState === 'SECURE' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.25)'}
+              stroke={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green)' : 'var(--accent-crimson)'}
+              strokeWidth="1.2"
             />
             <text
-              x="14"
+              x="12"
               y="4"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-emerald)' : 'var(--accent-crimson)'}
+              fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)'}
               fontSize="9"
               fontFamily="var(--font-mono)"
               fontWeight="700"
@@ -237,55 +234,54 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
           </g>
         </svg>
 
-        {/* Ambient telemetry HUD Overlay */}
+        {/* HUD Overlay Bar */}
         <div style={{
           position: 'absolute',
-          bottom: '12px',
-          left: '12px',
-          right: '12px',
+          bottom: '8px',
+          left: '8px',
+          right: '8px',
           display: 'flex',
           justifyContent: 'space-between',
-          background: 'rgba(10, 15, 22, 0.85)',
-          backdropFilter: 'blur(8px)',
-          padding: '8px 14px',
-          borderRadius: '6px',
+          background: 'rgba(4, 8, 4, 0.92)',
+          padding: '6px 12px',
+          borderRadius: '2px',
           border: '1px solid var(--border-subtle)',
           fontSize: '11px',
           fontFamily: 'var(--font-mono)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Thermometer size={14} color={isColdAnomaly ? 'var(--accent-cyan)' : 'var(--text-secondary)'} />
+            <Thermometer size={13} color={isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
             <span style={{ color: 'var(--text-muted)' }}>AMB TEMP:</span>
-            <span style={{ fontWeight: 700, color: isColdAnomaly ? 'var(--accent-cyan)' : 'var(--text-primary)' }}>
+            <span style={{ fontWeight: 700, color: isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
               {currentReading.temperatureC.toFixed(1)}°C
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Mic size={14} color={currentReading.acousticDb > 35 ? 'var(--accent-crimson)' : 'var(--text-secondary)'} />
+            <Mic size={13} color={currentReading.acousticDb > 35 ? 'var(--accent-crimson-bright)' : 'var(--accent-green)'} />
             <span style={{ color: 'var(--text-muted)' }}>ACOUSTIC:</span>
-            <span style={{ fontWeight: 700, color: currentReading.acousticDb > 35 ? 'var(--accent-crimson)' : 'var(--text-primary)' }}>
+            <span style={{ fontWeight: 700, color: currentReading.acousticDb > 35 ? 'var(--accent-crimson-bright)' : 'var(--text-primary)' }}>
               {currentReading.acousticDb.toFixed(1)} dB ({currentReading.acousticFreqHz.toFixed(1)}Hz)
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Zap size={14} color={isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-secondary)'} />
+            <Zap size={13} color={isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
             <span style={{ color: 'var(--text-muted)' }}>EMF FLUX:</span>
-            <span style={{ fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-primary)' }}>
+            <span style={{ fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
               {currentReading.emfFluxUtd.toFixed(2)} µT
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {currentReading.doorLatchState === 'SECURE' ? (
-              <Lock size={14} color="var(--accent-emerald)" />
+              <Lock size={13} color="var(--accent-green-bright)" />
             ) : (
-              <Unlock size={14} color="var(--accent-crimson)" />
+              <Unlock size={13} color="var(--accent-crimson-bright)" />
             )}
             <span style={{ color: 'var(--text-muted)' }}>PORTAL:</span>
-            <span style={{ fontWeight: 700, color: currentReading.doorLatchState === 'SECURE' ? 'var(--accent-emerald)' : 'var(--accent-crimson)' }}>
-              {currentReading.doorLatchState}
+            <span style={{ fontWeight: 700, color: currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)' }}>
+              [{currentReading.doorLatchState}]
             </span>
           </div>
         </div>

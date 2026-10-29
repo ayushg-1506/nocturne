@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import type { SensorReading, DetectedAnomaly } from '../types/telemetry';
-import { Thermometer, Mic, Zap, Activity } from 'lucide-react';
+import { Activity, Thermometer, Mic, Zap } from 'lucide-react';
 
 interface TelemetryChartsProps {
   readings: SensorReading[];
@@ -21,7 +21,6 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
 
   if (readings.length === 0) return null;
 
-  // Compute min/max for scaling
   const temps = readings.map(r => r.temperatureC);
   const minTemp = Math.floor(Math.min(...temps) - 1);
   const maxTemp = Math.ceil(Math.max(...temps) + 1);
@@ -32,11 +31,9 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
   const emfs = readings.map(r => r.emfFluxUtd);
   const maxEmf = Math.max(8, Math.ceil(Math.max(...emfs) + 1));
 
-  // Width & Height for SVG tracks
   const svgWidth = 800;
   const trackHeight = 65;
 
-  // Path generator
   const generatePath = (getValue: (r: SensorReading) => number, minVal: number, maxVal: number) => {
     return readings.map((r, i) => {
       const x = (r.epochMinutes / totalMinutes) * svgWidth;
@@ -60,22 +57,25 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
   };
 
   return (
-    <div className="glass-panel" ref={containerRef} style={{
+    <div style={{
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: '2px',
       padding: '16px',
       display: 'flex',
       flexDirection: 'column',
       gap: '12px'
-    }}>
+    }} ref={containerRef}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Activity size={16} color="var(--accent-cyan)" />
-          <h2 style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
+          <Activity size={15} color="var(--accent-green-bright)" />
+          <span className="terminal-title">
             MULTI-SPECTRAL FORENSIC TELEMETRY CHANNELS
-          </h2>
+          </span>
         </div>
         <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          SYNCHRONIZED MULTI-VARIATE SENSORS (CSV/JSON STREAM)
+          SYNCHRONIZED SENSOR STREAM [TABPFN RESIDUALS]
         </span>
       </div>
 
@@ -83,74 +83,71 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
       <div style={{
         position: 'relative',
         width: '100%',
-        background: 'rgba(7, 10, 15, 0.9)',
+        background: '#040804',
         border: '1px solid var(--border-subtle)',
-        borderRadius: '8px',
-        padding: '10px 0',
+        borderRadius: '2px',
+        padding: '8px 0',
         overflow: 'hidden'
       }}>
         {/* Track 1: Ambient Temperature */}
-        <div style={{ padding: '0 14px 6px 14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-cyan)' }}>
-              <Thermometer size={13} /> CHANNEL 01: AMBIENT TEMPERATURE (°C)
+        <div style={{ padding: '0 12px 6px 12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '3px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-green-bright)' }}>
+              <Thermometer size={12} /> [CH-01] AMBIENT TEMPERATURE (°C)
             </span>
             <span style={{ color: 'var(--text-muted)' }}>
               RANGE: {minTemp}°C – {maxTemp}°C (COLD DROP THRESHOLD &lt; 16°C)
             </span>
           </div>
           <svg viewBox={`0 0 ${svgWidth} ${trackHeight}`} style={{ width: '100%', height: `${trackHeight}px`, cursor: 'crosshair' }} onClick={handleSvgClick}>
-            {/* Grid line at 16C cold anomaly threshold */}
-            <line x1="0" y1={trackHeight - ((16 - minTemp) / (maxTemp - minTemp)) * (trackHeight - 10) - 5} x2={svgWidth} y2={trackHeight - ((16 - minTemp) / (maxTemp - minTemp)) * (trackHeight - 10) - 5} stroke="rgba(244, 63, 94, 0.3)" strokeDasharray="4 2" />
-            {/* Path */}
-            <path d={tempPath} fill="none" stroke="var(--accent-cyan)" strokeWidth="1.8" />
-            {/* Current Cursor */}
-            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1" strokeDasharray="2 2" />
+            <line x1="0" y1={trackHeight - ((16 - minTemp) / (maxTemp - minTemp)) * (trackHeight - 10) - 5} x2={svgWidth} y2={trackHeight - ((16 - minTemp) / (maxTemp - minTemp)) * (trackHeight - 10) - 5} stroke="rgba(245, 158, 11, 0.3)" strokeDasharray="4 2" />
+            <path d={tempPath} fill="none" stroke="var(--accent-green-bright)" strokeWidth="1.5" />
+            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.7)" strokeWidth="1" strokeDasharray="2 2" />
           </svg>
         </div>
 
         {/* Track 2: Acoustic SPL & Infrasound */}
-        <div style={{ padding: '0 14px 6px 14px', borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-violet)' }}>
-              <Mic size={13} /> CHANNEL 02: ACOUSTIC SPL (dB) &amp; 18.98Hz RESONANCE
+        <div style={{ padding: '0 12px 6px 12px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '3px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-amber-bright)' }}>
+              <Mic size={12} /> [CH-02] ACOUSTIC SPL (dB) &amp; 18.98Hz RESONANCE
             </span>
             <span style={{ color: 'var(--text-muted)' }}>
               PEAK: {maxDb} dB (INFRASONIC BAND)
             </span>
           </div>
           <svg viewBox={`0 0 ${svgWidth} ${trackHeight}`} style={{ width: '100%', height: `${trackHeight}px`, cursor: 'crosshair' }} onClick={handleSvgClick}>
-            <path d={dbPath} fill="none" stroke="var(--accent-violet)" strokeWidth="1.8" />
-            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1" strokeDasharray="2 2" />
+            <path d={dbPath} fill="none" stroke="var(--accent-amber-bright)" strokeWidth="1.5" />
+            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.7)" strokeWidth="1" strokeDasharray="2 2" />
           </svg>
         </div>
 
-        {/* Track 3: Electromagnetic Flux & Phantom Wattage */}
-        <div style={{ padding: '0 14px 6px 14px', borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-amber)' }}>
-              <Zap size={13} /> CHANNEL 03: ELECTROMAGNETIC INDUCTION FLUX (µT)
+        {/* Track 3: Electromagnetic Flux */}
+        <div style={{ padding: '0 12px 6px 12px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '3px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-crimson-bright)' }}>
+              <Zap size={12} /> [CH-03] ELECTROMAGNETIC INDUCTION FLUX (µT)
             </span>
             <span style={{ color: 'var(--text-muted)' }}>
               PEAK: {maxEmf} µT (NOMINAL BASELINE &lt; 0.4 µT)
             </span>
           </div>
           <svg viewBox={`0 0 ${svgWidth} ${trackHeight}`} style={{ width: '100%', height: `${trackHeight}px`, cursor: 'crosshair' }} onClick={handleSvgClick}>
-            <path d={emfPath} fill="none" stroke="var(--accent-amber)" strokeWidth="1.8" />
-            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.8)" strokeWidth="1" strokeDasharray="2 2" />
+            <path d={emfPath} fill="none" stroke="var(--accent-crimson-bright)" strokeWidth="1.5" />
+            <line x1={currentX} y1="0" x2={currentX} y2={trackHeight} stroke="rgba(255, 255, 255, 0.7)" strokeWidth="1" strokeDasharray="2 2" />
           </svg>
         </div>
 
-        {/* Anomaly Flag Markers across bottom */}
+        {/* Anomaly Flag Markers */}
         <div style={{
           position: 'relative',
           height: '20px',
-          margin: '0 14px',
+          margin: '0 12px',
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center'
         }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', position: 'absolute', left: '0' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', position: 'absolute', left: '0' }}>
             FLAGS:
           </span>
           {anomalies.map(a => {
@@ -165,11 +162,11 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
                   left: `${leftPct}%`,
                   top: '5px',
                   transform: 'translateX(-50%) rotate(45deg)',
-                  width: '8px',
-                  height: '8px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '1px',
-                  background: a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)',
-                  boxShadow: `0 0 8px ${a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
+                  background: a.severity === 'CRITICAL' ? 'var(--accent-crimson-bright)' : 'var(--accent-amber-bright)',
+                  boxShadow: `0 0 6px ${a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
                   cursor: 'pointer'
                 }}
               />

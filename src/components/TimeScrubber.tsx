@@ -32,30 +32,32 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
   );
 
   return (
-    <div className="glass-panel" style={{
-      margin: '0 16px 12px 16px',
-      padding: '12px 20px',
+    <div style={{
+      margin: '0 16px 10px 16px',
+      padding: '10px 16px',
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: '2px',
       display: 'flex',
       flexDirection: 'column',
       gap: '8px'
     }}>
       {/* Top Readout Row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Glowing Digital Time */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* Digital Time Readout */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock size={16} color="var(--accent-cyan)" />
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            <Clock size={14} color="var(--accent-green-bright)" />
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               LOCAL TIME:
             </span>
             <span style={{
-              fontSize: '20px',
+              fontSize: '18px',
               fontWeight: 800,
               fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.06em',
-              color: activeAnomaly ? 'var(--accent-crimson)' : 'var(--accent-cyan)',
-              textShadow: activeAnomaly ? '0 0 12px rgba(244, 63, 94, 0.6)' : '0 0 10px rgba(56, 189, 248, 0.4)',
-              transition: 'color 0.2s, text-shadow 0.2s'
+              letterSpacing: '0.08em',
+              color: activeAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)',
+              textShadow: activeAnomaly ? '0 0 10px rgba(245, 158, 11, 0.4)' : '0 0 8px rgba(34, 197, 94, 0.3)'
             }}>
               {currentTimestamp}
             </span>
@@ -63,62 +65,60 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
 
           {/* Active Anomaly Banner */}
           {activeAnomaly && (
-            <div className="badge badge-crimson" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px' }}>
-              <AlertTriangle size={13} />
-              <span>HOT ZONE: {activeAnomaly.type.replace(/_/g, ' ')} ({activeAnomaly.room})</span>
+            <div className="badge-amber" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 8px' }}>
+              <AlertTriangle size={12} />
+              <span>ACTIVE ANOMALY: {activeAnomaly.type.replace(/_/g, ' ')} [{activeAnomaly.room}]</span>
             </div>
           )}
         </div>
 
         {/* Playback Controls & Speed */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => onJumpAnomaly('prev')}
             className="btn-secondary"
-            style={{ padding: '6px 10px' }}
+            style={{ padding: '4px 8px' }}
             title="Jump to Previous Anomaly"
           >
-            <SkipBack size={14} />
+            <SkipBack size={12} />
           </button>
 
           <button
             onClick={onTogglePlay}
-            className="btn-primary"
-            style={{ padding: '6px 16px', borderRadius: '20px' }}
+            className={isPlaying ? "btn-amber" : "btn-primary"}
+            style={{ padding: '4px 14px' }}
           >
-            {isPlaying ? <Pause size={15} /> : <Play size={15} />}
-            <span style={{ fontSize: '12px', fontWeight: 700 }}>
-              {isPlaying ? 'PAUSE' : 'PLAY'}
-            </span>
+            {isPlaying ? <Pause size={13} /> : <Play size={13} />}
+            <span>{isPlaying ? '[ PAUSE ]' : '[ PLAY ]'}</span>
           </button>
 
           <button
             onClick={() => onJumpAnomaly('next')}
             className="btn-secondary"
-            style={{ padding: '6px 10px' }}
+            style={{ padding: '4px 8px' }}
             title="Jump to Next Anomaly"
           >
-            <SkipForward size={14} />
+            <SkipForward size={12} />
           </button>
 
           {/* Speed Selectors */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginLeft: '6px' }}>
             {[1, 4, 16].map((speed) => (
               <button
                 key={speed}
                 onClick={() => onChangeSpeed(speed)}
                 style={{
-                  background: playbackSpeed === speed ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                  color: playbackSpeed === speed ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                  border: `1px solid ${playbackSpeed === speed ? 'rgba(56, 189, 248, 0.4)' : 'var(--border-subtle)'}`,
-                  borderRadius: '4px',
-                  padding: '3px 7px',
-                  fontSize: '11px',
+                  background: playbackSpeed === speed ? 'rgba(34, 197, 94, 0.2)' : 'transparent',
+                  color: playbackSpeed === speed ? 'var(--accent-green-bright)' : 'var(--text-muted)',
+                  border: `1px solid ${playbackSpeed === speed ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
+                  borderRadius: '2px',
+                  padding: '3px 6px',
+                  fontSize: '10px',
                   fontFamily: 'var(--font-mono)',
                   cursor: 'pointer'
                 }}
               >
-                {speed}x
+                [{speed}x]
               </button>
             ))}
           </div>
@@ -126,7 +126,7 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
       </div>
 
       {/* Scrub Bar with Marker Overlay */}
-      <div style={{ position: 'relative', width: '100%', height: '24px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative', width: '100%', height: '20px', display: 'flex', alignItems: 'center' }}>
         {/* Anomaly Flag Markers */}
         {anomalies.map((a) => {
           const leftPct = (a.epochMinutes / totalMinutes) * 100;
@@ -138,12 +138,12 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
               style={{
                 position: 'absolute',
                 left: `${leftPct}%`,
-                top: '0px',
-                width: '6px',
-                height: '100%',
-                background: a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)',
-                boxShadow: `0 0 8px ${a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
-                borderRadius: '2px',
+                top: '2px',
+                width: '4px',
+                height: '16px',
+                background: a.severity === 'CRITICAL' ? 'var(--accent-crimson-bright)' : 'var(--accent-amber-bright)',
+                boxShadow: `0 0 6px ${a.severity === 'CRITICAL' ? 'var(--accent-crimson)' : 'var(--accent-amber)'}`,
+                borderRadius: '1px',
                 cursor: 'pointer',
                 zIndex: 2,
                 transform: 'translateX(-50%)'
@@ -161,11 +161,11 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
           onChange={(e) => onSeek(parseInt(e.target.value, 10))}
           style={{
             width: '100%',
-            accentColor: 'var(--accent-cyan)',
+            accentColor: 'var(--accent-green)',
             cursor: 'pointer',
-            height: '6px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '4px',
+            height: '4px',
+            background: 'var(--border-subtle)',
+            borderRadius: '1px',
             position: 'relative',
             zIndex: 3
           }}
@@ -177,18 +177,18 @@ export const TimeScrubber: React.FC<TimeScrubberProps> = ({
         display: 'flex',
         justifyContent: 'space-between',
         fontSize: '10px',
-        color: 'var(--text-dim)',
+        color: 'var(--text-muted)',
         fontFamily: 'var(--font-mono)',
         marginTop: '-2px'
       }}>
-        <span>22:00 (10 PM)</span>
+        <span>22:00</span>
         <span>23:00</span>
-        <span>00:00 (MIDNIGHT)</span>
+        <span>00:00 [MIDNIGHT]</span>
         <span>01:00</span>
         <span>02:00</span>
-        <span style={{ color: 'var(--accent-amber)', fontWeight: 600 }}>03:00 (WITCHING HOUR)</span>
+        <span style={{ color: 'var(--accent-amber-bright)', fontWeight: 700 }}>03:00 [ANOMALY WINDOW]</span>
         <span>04:00</span>
-        <span>05:00 (DAWN)</span>
+        <span>05:00 [DAWN]</span>
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import type { ModelProviderConfig } from '../engine/gemmaForensics';
-import { Settings, Check, X, Shield } from 'lucide-react';
+import { X, Check, Cpu } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   config: ModelProviderConfig;
-  onSaveConfig: (newConfig: ModelProviderConfig) => void;
+  onSaveConfig: (cfg: ModelProviderConfig) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -16,18 +16,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onSaveConfig
 }) => {
   const [provider, setProvider] = useState<ModelProviderConfig['provider']>(config.provider);
-  const [apiKey, setApiKey] = useState(config.apiKey || '');
-  const [baseUrl, setBaseUrl] = useState(config.baseUrl || 'http://localhost:11434/v1');
-  const [modelName, setModelName] = useState(config.modelName || 'gemma2:9b');
+  const [apiKey, setApiKey] = useState<string>(config.apiKey || '');
+  const [baseUrl, setBaseUrl] = useState<string>(config.baseUrl || 'http://localhost:11434/v1');
+  const [modelName, setModelName] = useState<string>(config.modelName || 'gemma2:9b');
 
   if (!isOpen) return null;
 
   const handleSave = () => {
     onSaveConfig({
       provider,
-      apiKey: apiKey.trim(),
-      baseUrl: baseUrl.trim(),
-      modelName: modelName.trim()
+      apiKey: apiKey.trim() || undefined,
+      baseUrl: baseUrl.trim() || undefined,
+      modelName: modelName.trim() || undefined
     });
     onClose();
   };
@@ -37,79 +37,50 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       position: 'fixed',
       inset: 0,
       background: 'rgba(0, 0, 0, 0.85)',
-      backdropFilter: 'blur(12px)',
-      zIndex: 100,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
-    }}>
-      <div className="glass-panel" style={{
+      zIndex: 1000,
+      padding: '16px'
+    }} onClick={onClose}>
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--accent-green)',
+        borderRadius: '2px',
         width: '100%',
-        maxWidth: '580px',
-        maxHeight: '90vh',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: '12px',
-        border: '1px solid var(--border-highlight)',
-        overflow: 'hidden'
-      }}>
+        maxWidth: '560px',
+        padding: '20px',
+        boxShadow: 'var(--shadow-glow-green)'
+      }} onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div style={{
-          padding: '16px 20px',
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Settings size={18} color="var(--accent-violet)" />
-            <div>
-              <h3 style={{ fontSize: '15px', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
-                FORENSIC ENGINE &amp; MODEL SETTINGS
-              </h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                Configure Google Gemma 2 &amp; TabPFN Anomaly Runtime
-              </p>
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Cpu size={16} color="var(--accent-green-bright)" />
+            <span className="terminal-title">
+              AI ENGINE &amp; MODEL RUNTIME CONFIGURATION
+            </span>
           </div>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-            <X size={20} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{ padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Air-Gapped Philosophy Callout */}
-          <div style={{
-            background: 'rgba(56, 189, 248, 0.06)',
-            border: '1px solid rgba(56, 189, 248, 0.25)',
-            borderRadius: '8px',
-            padding: '12px',
-            display: 'flex',
-            gap: '10px'
-          }}>
-            <Shield size={20} color="var(--accent-cyan)" style={{ flexShrink: 0, marginTop: '2px' }} />
-            <div style={{ fontSize: '12px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-              <strong style={{ color: 'var(--accent-cyan)' }}>Why Open Innovation Matters:</strong> Nocturne was designed to run 100% air-gapped on your laptop. Domestic sensor logs contain intimate activity patterns; open-weight models ensure your home data never leaves your machine.
-            </div>
-          </div>
-
-          {/* Provider Selection */}
+        {/* Form Body */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '6px' }}>
               SELECT INFERENCE PROVIDER:
-            </label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '6px' }}>
-              {/* Built-in Gemma Matrix */}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* Built-in */}
               <label style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                padding: '10px 14px',
-                borderRadius: '6px',
-                background: provider === 'built-in' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                border: `1px solid ${provider === 'built-in' ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
+                padding: '8px 12px',
+                borderRadius: '2px',
+                background: provider === 'built-in' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+                border: `1px solid ${provider === 'built-in' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
                 cursor: 'pointer'
               }}>
                 <input
@@ -119,25 +90,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   checked={provider === 'built-in'}
                   onChange={() => setProvider('built-in')}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Built-in Offline Forensic Adapter (Default)
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    100% Local, zero-latency, deterministic Gemma 2 protocol. No API key needed.
-                  </span>
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    [01] Built-in Offline Adapter (Default)
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                    100% Local, zero-latency, deterministic Bayesian reasoning. No API key needed.
+                  </div>
                 </div>
               </label>
 
-              {/* Google AI Studio Gemini API */}
+              {/* Google AI Studio */}
               <label style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                padding: '10px 14px',
-                borderRadius: '6px',
-                background: provider === 'gemini' ? 'rgba(168, 85, 247, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                border: `1px solid ${provider === 'gemini' ? 'var(--accent-violet)' : 'var(--border-subtle)'}`,
+                padding: '8px 12px',
+                borderRadius: '2px',
+                background: provider === 'gemini' ? 'rgba(245, 158, 11, 0.12)' : '#040804',
+                border: `1px solid ${provider === 'gemini' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
                 cursor: 'pointer'
               }}>
                 <input
@@ -147,13 +118,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   checked={provider === 'gemini'}
                   onChange={() => setProvider('gemini')}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Google AI Studio (Free Gemini / Gemma Endpoint)
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Connects directly to Google's free-tier developer API.
-                  </span>
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    [02] Google AI Studio (Gemini / Gemma API)
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                    Connects directly to Google's cloud developer API endpoint.
+                  </div>
                 </div>
               </label>
 
@@ -162,10 +133,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                padding: '10px 14px',
-                borderRadius: '6px',
-                background: provider === 'ollama' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                border: `1px solid ${provider === 'ollama' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+                padding: '8px 12px',
+                borderRadius: '2px',
+                background: provider === 'ollama' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+                border: `1px solid ${provider === 'ollama' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
                 cursor: 'pointer'
               }}>
                 <input
@@ -175,13 +146,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   checked={provider === 'ollama'}
                   onChange={() => setProvider('ollama')}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Local Ollama Instance (`ollama run gemma2`)
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Points to local port 11434 for pure offline GPU/CPU model inference.
-                  </span>
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    [03] Local Ollama Instance (`gemma2:9b`)
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                    Points to local port 11434 for pure offline model inference.
+                  </div>
                 </div>
               </label>
             </div>
@@ -190,90 +161,56 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Conditional API Key Input */}
           {provider === 'gemini' && (
             <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
                 GOOGLE AI STUDIO API KEY:
-              </label>
-              <div style={{ position: 'relative', marginTop: '4px' }}>
-                <input
-                  type="password"
-                  value={apiKey}
-                  onChange={e => setApiKey(e.target.value)}
-                  placeholder="AIzaSy..."
-                  style={{
-                    width: '100%',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                    color: 'var(--text-primary)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '12px'
-                  }}
-                />
               </div>
-              <p style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '4px' }}>
-                You can generate a free key at <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" style={{ color: 'var(--accent-cyan)' }}>aistudio.google.com</a>.
-              </p>
+              <input
+                type="password"
+                value={apiKey}
+                onChange={e => setApiKey(e.target.value)}
+                placeholder="AIzaSy..."
+                style={{ width: '100%', fontSize: '11px' }}
+              />
             </div>
           )}
 
           {/* Local Ollama settings */}
           {provider === 'ollama' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div>
-                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
                   OLLAMA BASE URL:
-                </label>
+                </div>
                 <input
                   type="text"
                   value={baseUrl}
                   onChange={e => setBaseUrl(e.target.value)}
-                  style={{
-                    width: '100%',
-                    marginTop: '4px',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                    color: 'var(--text-primary)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '12px'
-                  }}
+                  style={{ width: '100%', fontSize: '11px' }}
                 />
               </div>
               <div>
-                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
                   MODEL TAG:
-                </label>
+                </div>
                 <input
                   type="text"
                   value={modelName}
                   onChange={e => setModelName(e.target.value)}
                   placeholder="gemma2:9b"
-                  style={{
-                    width: '100%',
-                    marginTop: '4px',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '6px',
-                    padding: '8px 10px',
-                    color: 'var(--text-primary)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '12px'
-                  }}
+                  style={{ width: '100%', fontSize: '11px' }}
                 />
               </div>
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
-            <button onClick={onClose} className="btn-secondary">
-              Cancel
+          {/* Actions */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
+            <button onClick={onClose} className="btn-secondary" style={{ padding: '5px 12px', fontSize: '11px' }}>
+              [ CANCEL ]
             </button>
-            <button onClick={handleSave} className="btn-primary" style={{ padding: '8px 20px' }}>
-              <Check size={14} />
-              <span>APPLY SETTINGS</span>
+            <button onClick={handleSave} className="btn-primary" style={{ padding: '5px 16px', fontSize: '11px' }}>
+              <Check size={13} />
+              <span>[ APPLY SETTINGS ]</span>
             </button>
           </div>
         </div>

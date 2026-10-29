@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { SensorReading } from '../types/telemetry';
 import { AudioSynthesizer } from '../engine/audioSynthesizer';
-import { Radio, Volume2, Sparkles } from 'lucide-react';
+import { Radio, Volume2, Activity } from 'lucide-react';
 
 interface SpectralScopeProps {
   currentReading: SensorReading;
@@ -20,7 +20,6 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
   const isInfrasonic = currentReading.acousticFreqHz >= 18.0 && currentReading.acousticFreqHz <= 20.0;
   const isHighEmf = currentReading.emfFluxUtd > 3.0;
 
-  // Toggle localized infrasound test tone
   const handleToggleInfrasound = () => {
     if (!isAudioOn) {
       onToggleAudio();
@@ -43,15 +42,15 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
       const w = canvas.width;
       const h = canvas.height;
 
-      // Dark CRT clear
-      ctx.fillStyle = 'rgba(5, 7, 10, 0.35)';
+      // Dark Terminal CRT Clear
+      ctx.fillStyle = 'rgba(2, 6, 2, 0.4)';
       ctx.fillRect(0, 0, w, h);
 
-      // Grid lines
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      // Green phosphor CRT grid
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.08)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let x = 0; x < w; x += 30) {
+      for (let x = 0; x < w; x += 25) {
         ctx.moveTo(x, 0);
         ctx.lineTo(x, h);
       }
@@ -61,16 +60,16 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
       }
       ctx.stroke();
 
-      // Oscilloscope Waveform based on current telemetry
+      // Oscilloscope Waveform
       ctx.beginPath();
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.8;
       ctx.strokeStyle = isInfrasonic 
-        ? '#a855f7' 
+        ? '#fbbf24' 
         : isHighEmf 
-        ? '#f59e0b' 
-        : '#38bdf8';
+        ? '#f87171' 
+        : '#4ade80';
 
-      ctx.shadowBlur = isInfrasonic || isHighEmf ? 12 : 6;
+      ctx.shadowBlur = isInfrasonic || isHighEmf ? 10 : 5;
       ctx.shadowColor = ctx.strokeStyle;
 
       const amplitude = Math.min(35, (currentReading.acousticDb / 60) * 35);
@@ -78,8 +77,7 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
 
       for (let x = 0; x < w; x++) {
         const rad = (x / w) * Math.PI * 4 * freq + phase;
-        // add slight noise for realism
-        const noise = (Math.random() - 0.5) * (isHighEmf ? 10 : 2);
+        const noise = (Math.random() - 0.5) * (isHighEmf ? 8 : 1.5);
         const y = h / 2 + Math.sin(rad) * amplitude + noise;
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
@@ -99,7 +97,10 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
   }, [currentReading, isInfrasonic, isHighEmf]);
 
   return (
-    <div className="glass-panel" style={{
+    <div style={{
+      background: 'var(--bg-panel)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: '2px',
       padding: '16px',
       display: 'flex',
       flexDirection: 'column',
@@ -107,46 +108,46 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
       height: '100%'
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Radio size={16} color="var(--accent-violet)" />
-          <h2 style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
-            SPECTRAL OSCILLOSCOPE &amp; EVP DECODER
-          </h2>
+          <Radio size={15} color="var(--accent-green-bright)" />
+          <span className="terminal-title">
+            SPECTRAL OSCILLOSCOPE &amp; INFRASOUND ANALYZER
+          </span>
         </div>
-        <span className="badge badge-violet" style={{ fontSize: '10px' }}>
-          {isInfrasonic ? '18.98Hz DETECTED' : 'SPECTRAL SCAN'}
+        <span className={isInfrasonic ? "badge-amber" : "badge-green"} style={{ fontSize: '10px' }}>
+          {isInfrasonic ? '[18.98Hz DETECTED]' : '[SPECTRAL SCAN ACTIVE]'}
         </span>
       </div>
 
       {/* CRT Canvas */}
-      <div className="scanlines" style={{
+      <div style={{
         position: 'relative',
         width: '100%',
-        height: '140px',
-        background: '#040608',
-        borderRadius: '6px',
+        height: '150px',
+        background: '#020502',
+        borderRadius: '2px',
         border: '1px solid var(--border-subtle)',
         overflow: 'hidden'
       }}>
         <canvas
           ref={canvasRef}
-          width={380}
-          height={140}
+          width={400}
+          height={150}
           style={{ width: '100%', height: '100%', display: 'block' }}
         />
 
         {/* Oscilloscope Monospace HUD */}
         <div style={{
           position: 'absolute',
-          top: '8px',
-          left: '10px',
-          right: '10px',
+          top: '6px',
+          left: '8px',
+          right: '8px',
           display: 'flex',
           justifyContent: 'space-between',
           fontSize: '10px',
           fontFamily: 'var(--font-mono)',
-          color: 'var(--text-secondary)',
+          color: 'var(--text-muted)',
           pointerEvents: 'none'
         }}>
           <span>FREQ: {currentReading.acousticFreqHz.toFixed(2)} Hz</span>
@@ -157,43 +158,43 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
 
       {/* Infrasound & Spectral Controls */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600 }}>
-              The 18.98Hz "Ghost Frequency"
-            </span>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              Resonates human eye globe (18.9Hz), inducing peripheral shadow illusions &amp; dread.
-            </span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-amber-bright)' }}>
+              18.98Hz Ocular Resonant Band
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              Vibrates cornea (18.9Hz), inducing peripheral shadow illusions &amp; chills.
+            </div>
           </div>
 
           <button
             onClick={handleToggleInfrasound}
-            className={`btn-secondary ${isInfrasoundPlaying ? 'badge-violet' : ''}`}
-            style={{ padding: '6px 12px', fontSize: '11px' }}
+            className={isInfrasoundPlaying ? "btn-amber" : "btn-secondary"}
+            style={{ padding: '5px 12px', fontSize: '11px' }}
           >
-            <Volume2 size={13} color="var(--accent-violet)" />
-            <span>{isInfrasoundPlaying ? 'MUTE 18.98Hz' : 'TEST RESONANCE'}</span>
+            <Volume2 size={12} />
+            <span>{isInfrasoundPlaying ? '[ MUTE 18.98Hz ]' : '[ TEST 18.98Hz ]'}</span>
           </button>
         </div>
 
         {/* Environmental Convergence Status */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.6)',
-          borderRadius: '6px',
+          background: '#040804',
+          borderRadius: '2px',
           border: '1px solid var(--border-subtle)',
-          padding: '10px 12px',
+          padding: '8px 10px',
           display: 'flex',
           flexDirection: 'column',
           gap: '4px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
-            <Sparkles size={12} color="var(--accent-cyan)" />
-            <span>TABPFN ANOMALY CLASSIFICATION:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+            <Activity size={12} color="var(--accent-green-bright)" />
+            <span>TABPFN STATISTICAL CLASSIFICATION:</span>
           </div>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: isInfrasonic || isHighEmf ? 'var(--accent-amber)' : 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: isInfrasonic || isHighEmf ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)', fontFamily: 'var(--font-mono)' }}>
             {isInfrasonic && isHighEmf 
-              ? 'CLASS: SPECTRAL_CONVERGENCE (P > 0.98)' 
+              ? 'CLASS: MULTI_SPECTRAL_CONVERGENCE (P > 0.98)' 
               : isInfrasonic 
               ? 'CLASS: INFRASONIC_ACOUSTIC_RESONANCE (P = 0.965)'
               : isHighEmf 

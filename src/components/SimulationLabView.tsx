@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { ForensicCase } from '../types/telemetry';
 import type { ModelProviderConfig } from '../engine/gemmaForensics';
 import { AnomalyEngine } from '../engine/anomalyDetector';
-import { Terminal, Upload, Download, Sparkles, Check, Cpu, Zap, ThermometerSnowflake, Key } from 'lucide-react';
+import { Terminal, Upload, Download, Check, Cpu, Zap, ThermometerSnowflake, Key } from 'lucide-react';
 
 interface SimulationLabViewProps {
   activeCase: ForensicCase;
@@ -59,245 +59,312 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
       const idxDb = headers.findIndex(h => h.includes('db') || h.includes('sound'));
       const idxFreq = headers.findIndex(h => h.includes('freq') || h.includes('hz'));
       const idxPir = headers.findIndex(h => h.includes('pir') || h.includes('motion'));
-      const idxEmf = headers.findIndex(h => h.includes('emf') || h.includes('mag'));
+      const idxEmf = headers.findIndex(h => h.includes('emf') || h.includes('flux'));
       const idxWatt = headers.findIndex(h => h.includes('watt') || h.includes('power'));
       const idxLatch = headers.findIndex(h => h.includes('latch') || h.includes('door'));
 
-      const readings = [];
-      for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].split(',').map(p => p.trim());
-        if (parts.length < 2) continue;
-        const timeStr = idxTime !== -1 ? parts[idxTime] : `03:${(i * 3).toString().padStart(2, '0')}:00`;
-        const temp = idxTemp !== -1 ? parseFloat(parts[idxTemp]) || 20.0 : 20.0;
-        const hum = idxHum !== -1 ? parseFloat(parts[idxHum]) || 50.0 : 50.0;
-        const db = idxDb !== -1 ? parseFloat(parts[idxDb]) || 22.0 : 22.0;
-        const freq = idxFreq !== -1 ? parseFloat(parts[idxFreq]) || 50.0 : 50.0;
-        const pir = idxPir !== -1 ? parts[idxPir].toLowerCase() === 'true' || parts[idxPir] === '1' : false;
-        const emf = idxEmf !== -1 ? parseFloat(parts[idxEmf]) || 0.25 : 0.25;
-        const watts = idxWatt !== -1 ? parseFloat(parts[idxWatt]) || 15.0 : 15.0;
-        const latchRaw = idxLatch !== -1 ? parts[idxLatch].toUpperCase() : 'SECURE';
-        const latch = ['SECURE', 'AJAR', 'UNLATCHED', 'CYCLING'].includes(latchRaw) ? (latchRaw as any) : 'SECURE';
+      if (idxTime === -1 || idxTemp === -1) {
+        throw new Error('CSV must contain at least timestamp and temperature columns.');
+      }
 
-        readings.push({
+      const parsedReadings = lines.slice(1).map((line, rowIdx) => {
+        const cols = line.split(',').map(c => c.trim());
+        const timeStr = cols[idxTime] || `03:${rowIdx < 10 ? '0' : ''}${rowIdx}:00`;
+        const temp = parseFloat(cols[idxTemp]) || 20.0;
+        const hum = idxHum !== -1 ? parseFloat(cols[idxHum]) || 45 : 45;
+        const db = idxDb !== -1 ? parseFloat(cols[idxDb]) || 22 : 22;
+        const freq = idxFreq !== -1 ? parseFloat(cols[idxFreq]) || 50 : 50;
+        const pir = idxPir !== -1 ? cols[idxPir].toLowerCase() === 'true' || cols[idxPir] === '1' : false;
+        const emf = idxEmf !== -1 ? parseFloat(cols[idxEmf]) || 0.25 : 0.25;
+        const watt = idxWatt !== -1 ? parseFloat(cols[idxWatt]) || 15 : 15;
+        const latch = (idxLatch !== -1 ? cols[idxLatch].toUpperCase() : 'SECURE') as 'SECURE' | 'AJAR' | 'UNLATCHED';
+
+        const parts = timeStr.split(':').map(Number);
+        const epochMinutes = ((parts[0] || 3) * 60 + (parts[1] || rowIdx)) - (22 * 60);
+
+        return {
           timestamp: timeStr,
-          epochMinutes: i * 3,
+          epochMinutes: epochMinutes < 0 ? epochMinutes + 1440 : epochMinutes,
           temperatureC: temp,
           humidityPct: hum,
           acousticDb: db,
           acousticFreqHz: freq,
           pirMotion: pir,
-          pirRoom: pir ? 'Imported Zone' : null,
           emfFluxUtd: emf,
-          powerWattage: watts,
+          powerWattage: watt,
           doorLatchState: latch,
-          doorRoom: 'Imported Portal'
-        });
-      }
+          pirRoom: null,
+          doorRoom: 'Main Portal'
+        };
+      });
 
-      const detected = AnomalyEngine.analyzeReadings(readings, 'Custom Zone');
-      const newCase: ForensicCase = {
-        id: `import-${Date.now()}`,
-        caseNumber: `USER-LOG #${Math.floor(Math.random() * 8999 + 1000)}`,
-        title: 'Imported Home Assistant Telemetry Session',
-        subtitle: `Custom Data (${readings.length} records)`,
-        location: 'Edge Gateway Ingest',
-        structureType: 'Monitored Residence',
-        ambientConditions: 'Imported time-series telemetry',
-        incidentTimestamp: `${readings[0]?.timestamp || '00:00'} – ${readings[readings.length - 1]?.timestamp || '05:00'}`,
-        description: `Custom ingested dataset with ${readings.length} multi-sensor time-series samples.`,
-        investigatorNotes: `Scanned with TabPFN foundation tabular detector. Found ${detected.length} anomalous clusters.`,
+      const anomalies = AnomalyEngine.analyzeReadings(parsedReadings);
+
+      const customCase: ForensicCase = {
+        id: `custom-import-${Date.now()}`,
+        caseNumber: `USER-${Math.floor(1000 + Math.random() * 9000)}`,
+        title: 'Custom Telemetry Stream (User Upload)',
+        subtitle: 'Ingested Time-Series Anomaly Scan',
+        location: 'Local Sensor Ingestion',
+        structureType: 'User Defined Structure',
+        ambientConditions: 'Variable Ingested Baseline',
+        incidentTimestamp: parsedReadings[0]?.timestamp || '03:00:00',
+        description: `Imported telemetry session with ${parsedReadings.length} frames.`,
+        investigatorNotes: 'Automated TabPFN multi-variate statistical evaluation.',
         floorplan: activeCase.floorplan,
-        readings,
-        anomalies: detected
+        readings: parsedReadings,
+        anomalies
       };
 
-      onImportCase(newCase);
-      setImportStatus(`Successfully ingested ${readings.length} records. Detected ${detected.length} anomalies.`);
-    } catch (err: any) {
-      setImportStatus(`Error: ${err?.message || 'Failed to parse CSV'}`);
+      onImportCase(customCase);
+      setImportStatus(`Success! Ingested ${parsedReadings.length} records. Identified ${anomalies.length} anomaly vectors.`);
+    } catch (err: unknown) {
+      setImportStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-      {/* Simulation Trigger Matrix */}
-      <div className="glass-panel" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-          <Terminal size={18} color="var(--accent-amber)" />
-          <h3 style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+    <div style={{
+      margin: '0 16px 14px 16px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px'
+    }}>
+      {/* Synthetic Anomaly Injection Matrix */}
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '16px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+          <Terminal size={15} color="var(--accent-green-bright)" />
+          <span className="terminal-title">
             SYNTHETIC ANOMALY INJECTION MATRIX
-          </h3>
+          </span>
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-          Inject real-time multi-variate environmental disturbances into the active timeline to observe how TabPFN anomaly detection and Google Gemma 2 classify and deduce verdicts in real-time.
+        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+          Inject real-time multi-variate environmental disturbances into the active timeline to observe TabPFN anomaly detection and Google Gemma 2 causal deduction.
         </p>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '12px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '8px'
         }}>
-          {/* Action 1 */}
+          {/* Inject 1: Flash Cold Drop */}
           <button
             onClick={() => onInjectEvent('cold')}
             className="btn-secondary"
-            style={{ padding: '12px 14px', justifyContent: 'flex-start', textAlign: 'left', display: 'flex', gap: '10px' }}
+            style={{
+              padding: '10px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '4px',
+              textAlign: 'left'
+            }}
           >
-            <ThermometerSnowflake size={20} color="var(--accent-cyan)" />
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '12px' }}>Flash Cold Drop</div>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>-7.2°C thermal collapse in 180s</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-amber-bright)', fontWeight: 700, fontSize: '11px' }}>
+              <ThermometerSnowflake size={14} /> [ INJECT: COLD DROP ]
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              -7.2°C thermal collapse in 180s
             </div>
           </button>
 
-          {/* Action 2 */}
+          {/* Inject 2: 18.98Hz Infrasound */}
           <button
             onClick={() => onInjectEvent('infrasound')}
             className="btn-secondary"
-            style={{ padding: '12px 14px', justifyContent: 'flex-start', textAlign: 'left', display: 'flex', gap: '10px' }}
+            style={{
+              padding: '10px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '4px',
+              textAlign: 'left'
+            }}
           >
-            <Zap size={20} color="var(--accent-violet)" />
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '12px' }}>18.98Hz Infrasound Wave</div>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Ocular resonance + 44dB spike</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-amber-bright)', fontWeight: 700, fontSize: '11px' }}>
+              <Zap size={14} /> [ INJECT: 18.98Hz WAVE ]
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              Ocular resonance + 44dB spike
             </div>
           </button>
 
-          {/* Action 3 */}
+          {/* Inject 3: Wattage Surge */}
           <button
             onClick={() => onInjectEvent('surge')}
             className="btn-secondary"
-            style={{ padding: '12px 14px', justifyContent: 'flex-start', textAlign: 'left', display: 'flex', gap: '10px' }}
+            style={{
+              padding: '10px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '4px',
+              textAlign: 'left'
+            }}
           >
-            <Cpu size={20} color="var(--accent-amber)" />
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '12px' }}>Ghost Wattage Surge</div>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>+2,380W on dead circuit breaker</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-crimson-bright)', fontWeight: 700, fontSize: '11px' }}>
+              <Cpu size={14} /> [ INJECT: WATTAGE SURGE ]
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              +2,380W phantom load spike
             </div>
           </button>
 
-          {/* Action 4 */}
+          {/* Inject 4: Zero-Token Latch */}
           <button
             onClick={() => onInjectEvent('latch')}
             className="btn-secondary"
-            style={{ padding: '12px 14px', justifyContent: 'flex-start', textAlign: 'left', display: 'flex', gap: '10px' }}
+            style={{
+              padding: '10px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '4px',
+              textAlign: 'left'
+            }}
           >
-            <Key size={20} color="var(--accent-crimson)" />
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '12px' }}>Zero-Token Latch Release</div>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Solenoid deadbolt opens unprompted</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-crimson-bright)', fontWeight: 700, fontSize: '11px' }}>
+              <Key size={14} /> [ INJECT: LATCH RELEASE ]
+            </div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+              Solenoid deadbolt unlatches
             </div>
           </button>
 
-          {/* Action 5: Full Convergence */}
+          {/* Inject 5: Full Convergence */}
           <button
             onClick={() => onInjectEvent('convergence')}
             className="btn-primary"
-            style={{ padding: '12px 14px', justifyContent: 'flex-start', textAlign: 'left', display: 'flex', gap: '10px' }}
+            style={{
+              padding: '10px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '4px',
+              textAlign: 'left'
+            }}
           >
-            <Sparkles size={20} color="var(--accent-cyan)" />
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '12px' }}>Full Convergence Event</div>
-              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Synchronize all vectors (Critical)</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '11px' }}>
+              <Zap size={14} /> [ TRIGGER: CONVERGENCE ]
+            </div>
+            <div style={{ fontSize: '10px', opacity: 0.8 }}>
+              Synchronize all vectors (Critical)
             </div>
           </button>
         </div>
       </div>
 
-      {/* CSV Ingestion Panel */}
-      <div className="glass-panel" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Upload size={18} color="var(--accent-cyan)" />
-            <h3 style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+      {/* CSV Ingestion */}
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '16px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Upload size={15} color="var(--accent-green-bright)" />
+            <span className="terminal-title">
               HOME ASSISTANT &amp; IOT CSV INGESTION
-            </h3>
+            </span>
           </div>
           <button
             onClick={handleDownloadTemplate}
-            style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+            className="btn-secondary"
+            style={{ padding: '3px 8px', fontSize: '10px' }}
           >
-            <Download size={13} /> Download Sample CSV
+            <Download size={11} />
+            <span>[ DOWNLOAD SAMPLE CSV ]</span>
           </button>
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>
           Paste raw telemetry CSV lines from Zigbee2MQTT, ESPHome, or Home Assistant sensor histories.
         </p>
 
         <textarea
-          rows={6}
+          rows={5}
           value={csvText}
           onChange={e => setCsvText(e.target.value)}
           placeholder="timestamp,temperatureC,humidityPct,acousticDb,acousticFreqHz,pirMotion,emfFluxUtd,powerWattage,doorLatchState&#10;03:14:00,14.2,54.0,43.5,18.98,true,6.8,1450,UNLATCHED"
           style={{
             width: '100%',
-            background: 'rgba(8, 12, 18, 0.9)',
+            background: '#040804',
             border: '1px solid var(--border-subtle)',
-            borderRadius: '6px',
-            padding: '10px',
+            borderRadius: '2px',
+            padding: '8px',
             color: 'var(--text-primary)',
             fontFamily: 'var(--font-mono)',
             fontSize: '11px',
             lineHeight: 1.5,
-            marginBottom: '10px'
+            marginBottom: '8px'
           }}
         />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           {importStatus ? (
-            <span style={{ fontSize: '11px', color: importStatus.startsWith('Error') ? 'var(--accent-crimson)' : 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ fontSize: '11px', color: importStatus.startsWith('Error') ? 'var(--accent-crimson-bright)' : 'var(--accent-green-bright)' }}>
               {importStatus}
             </span>
           ) : <span />}
 
-          <button onClick={handleProcessCsv} className="btn-primary" style={{ padding: '6px 18px' }}>
-            <Check size={14} /> <span>SCAN &amp; INGEST CSV</span>
+          <button onClick={handleProcessCsv} className="btn-primary" style={{ padding: '5px 14px', fontSize: '11px' }}>
+            <Check size={13} /> <span>[ SCAN &amp; INGEST CSV ]</span>
           </button>
         </div>
       </div>
 
       {/* Model Engine Configuration Panel */}
-      <div className="glass-panel" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-          <Cpu size={18} color="var(--accent-violet)" />
-          <h3 style={{ fontSize: '15px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-            AI ENGINE &amp; MODEL RUNTIME SETTINGS
-          </h3>
+      <div style={{
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '2px',
+        padding: '16px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+          <Cpu size={15} color="var(--accent-green-bright)" />
+          <span className="terminal-title">
+            AI ENGINE &amp; MODEL RUNTIME CONFIGURATION
+          </span>
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-          Select between local air-gapped deterministic Bayesian inference, Google AI Studio Gemini API, or local Ollama.
+        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+          Select between local air-gapped deterministic inference, Google AI Studio endpoint, or local Ollama.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px' }}>
           {/* Option 1: Built-in */}
           <div style={{
-            background: modelConfig.provider === 'built-in' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(0, 0, 0, 0.3)',
-            border: `1px solid ${modelConfig.provider === 'built-in' ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
-            padding: '14px',
-            borderRadius: '8px',
+            background: modelConfig.provider === 'built-in' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+            border: `1px solid ${modelConfig.provider === 'built-in' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
+            padding: '12px',
+            borderRadius: '2px',
             cursor: 'pointer'
           }} onClick={() => onUpdateModelConfig({ ...modelConfig, provider: 'built-in' })}>
-            <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
-              1. Built-in Offline Forensic Adapter (Default)
+            <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+              [01] Built-in Offline Adapter (Default)
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-              100% Air-Gapped. Runs deterministically on your laptop with zero latency and zero API keys.
+              100% Air-Gapped. Runs deterministically on edge hardware with zero latency and zero API keys.
             </p>
           </div>
 
           {/* Option 2: Google AI Studio */}
           <div style={{
-            background: modelConfig.provider === 'gemini' ? 'rgba(168, 85, 247, 0.12)' : 'rgba(0, 0, 0, 0.3)',
-            border: `1px solid ${modelConfig.provider === 'gemini' ? 'var(--accent-violet)' : 'var(--border-subtle)'}`,
-            padding: '14px',
-            borderRadius: '8px',
+            background: modelConfig.provider === 'gemini' ? 'rgba(245, 158, 11, 0.12)' : '#040804',
+            border: `1px solid ${modelConfig.provider === 'gemini' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+            padding: '12px',
+            borderRadius: '2px',
             cursor: 'pointer'
           }} onClick={() => onUpdateModelConfig({ ...modelConfig, provider: 'gemini' })}>
-            <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
-              2. Google AI Studio (Free Gemini/Gemma)
+            <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+              [02] Google AI Studio (Gemini / Gemma API)
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-              Connect directly to Google's cloud API endpoint for live LLM streaming.
+              Connects to Google Cloud API for live model reasoning.
             </p>
             {modelConfig.provider === 'gemini' && (
               <div style={{ marginTop: '8px' }} onClick={e => e.stopPropagation()}>
@@ -309,7 +376,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
                     setApiKeyInput(e.target.value);
                     onUpdateModelConfig({ ...modelConfig, apiKey: e.target.value });
                   }}
-                  style={{ width: '100%', padding: '6px 8px', fontSize: '11px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--border-subtle)', borderRadius: '4px', color: '#fff' }}
+                  style={{ width: '100%', fontSize: '11px' }}
                 />
               </div>
             )}
@@ -317,17 +384,17 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
 
           {/* Option 3: Local Ollama */}
           <div style={{
-            background: modelConfig.provider === 'ollama' ? 'rgba(245, 158, 11, 0.12)' : 'rgba(0, 0, 0, 0.3)',
-            border: `1px solid ${modelConfig.provider === 'ollama' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
-            padding: '14px',
-            borderRadius: '8px',
+            background: modelConfig.provider === 'ollama' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+            border: `1px solid ${modelConfig.provider === 'ollama' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
+            padding: '12px',
+            borderRadius: '2px',
             cursor: 'pointer'
           }} onClick={() => onUpdateModelConfig({ ...modelConfig, provider: 'ollama' })}>
-            <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)' }}>
-              3. Local Ollama (`gemma2:9b`)
+            <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+              [03] Local Ollama (`gemma2:9b`)
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-              Points to `http://localhost:11434` for open-weight offline model inference.
+              Points to local server for open-weight offline model inference.
             </p>
             {modelConfig.provider === 'ollama' && (
               <div style={{ marginTop: '8px' }} onClick={e => e.stopPropagation()}>
@@ -339,7 +406,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
                     setOllamaUrlInput(e.target.value);
                     onUpdateModelConfig({ ...modelConfig, baseUrl: e.target.value });
                   }}
-                  style={{ width: '100%', padding: '6px 8px', fontSize: '11px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--border-subtle)', borderRadius: '4px', color: '#fff' }}
+                  style={{ width: '100%', fontSize: '11px' }}
                 />
               </div>
             )}
