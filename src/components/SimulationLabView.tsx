@@ -110,7 +110,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
         ambientConditions: 'Variable Ingested Baseline',
         incidentTimestamp: parsedReadings[0]?.timestamp || '03:00:00',
         description: `Imported telemetry session with ${parsedReadings.length} frames.`,
-        investigatorNotes: 'Automated TabPFN multi-variate statistical evaluation.',
+        investigatorNotes: 'Automated multi-variate statistical anomaly evaluation.',
         floorplan: activeCase.floorplan,
         readings: parsedReadings,
         anomalies
@@ -144,7 +144,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
           </span>
         </div>
         <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-          Inject real-time multi-variate environmental disturbances into the active timeline to observe TabPFN anomaly detection and Google Gemma 2 causal deduction.
+          Inject real-time multi-variate environmental disturbances into the active timeline to observe real-time statistical anomaly detection and causal deduction.
         </p>
 
         <div style={{
@@ -361,7 +361,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
             cursor: 'pointer'
           }} onClick={() => onUpdateModelConfig({ ...modelConfig, provider: 'gemini' })}>
             <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
-              [02] Google AI Studio (Gemini / Gemma API)
+              [02] Cloud API Inference Endpoint
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
               Connects to Google Cloud API for live model reasoning.
@@ -391,7 +391,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
             cursor: 'pointer'
           }} onClick={() => onUpdateModelConfig({ ...modelConfig, provider: 'ollama' })}>
             <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
-              [03] Local Ollama (`gemma2:9b`)
+              [03] Local Ollama Instance (:11434)
             </div>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
               Points to local server for open-weight offline model inference.

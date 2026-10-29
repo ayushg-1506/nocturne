@@ -48,7 +48,7 @@ export class GemmaForensicsEngine {
       return {
         caseId: forensicCase.id,
         generatedAt: new Date().toLocaleTimeString(),
-        engine: 'Google Gemma-2-9B-It (Offline Forensic Adapter)',
+        engine: 'Causal Inference Engine v2.4 (Air-Gapped)',
         sha256Seal: sha256,
         primaryVector: 'Thermal Plume Collapse & Solenoid Zero-Token Actuation',
         confidenceIndex: 0.984,
@@ -77,7 +77,7 @@ export class GemmaForensicsEngine {
       return {
         caseId: forensicCase.id,
         generatedAt: new Date().toLocaleTimeString(),
-        engine: 'Google Gemma-2-9B-It (Offline Forensic Adapter)',
+        engine: 'Causal Inference Engine v2.4 (Air-Gapped)',
         sha256Seal: sha256,
         primaryVector: 'Phantom Sub-Panel Induction & Low-Frequency Acoustic Envelope',
         confidenceIndex: 0.991,
@@ -106,7 +106,7 @@ export class GemmaForensicsEngine {
     return {
       caseId: forensicCase.id,
       generatedAt: new Date().toLocaleTimeString(),
-      engine: 'Google Gemma-2-9B-It (Zero-Shot Forensic Pipeline)',
+      engine: 'Causal Inference Engine v2.4 (Local Core)',
       sha256Seal: sha256,
       primaryVector: primaryAnomaly?.type || 'Multi-Variate Environmental Divergence',
       confidenceIndex: primaryAnomaly?.confidenceScore || 0.95,
@@ -167,7 +167,7 @@ Output strict valid JSON only without markdown formatting.`;
         return {
           caseId: forensicCase.id,
           generatedAt: new Date().toLocaleTimeString(),
-          engine: 'Google Gemma / Gemini (Live Google AI Endpoint)',
+          engine: 'Causal Inference Engine v2.4 (API Endpoint)',
           sha256Seal: sha256,
           confidenceIndex: 0.988,
           executiveSummary: parsed.executiveSummary,

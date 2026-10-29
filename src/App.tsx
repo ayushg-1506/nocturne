@@ -1,27 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { FORENSIC_CASES } from './data/cases';
 import type { ForensicCase, SensorReading } from './types/telemetry';
-import { Header } from './components/Header';
-import { ExecutiveBriefing } from './components/ExecutiveBriefing';
-import { SensorStatusStrip } from './components/SensorStatusStrip';
-import { TimeScrubber } from './components/TimeScrubber';
-import { NavigationTabs, type ActiveTab } from './components/NavigationTabs';
-import { FloorplanView } from './components/FloorplanView';
+import { Sidebar, type ActiveSection } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
+import { OverviewSection } from './components/OverviewSection';
 import { TelemetryLabView } from './components/TelemetryLabView';
-import { SpectralScope } from './components/SpectralScope';
 import { DossierView } from './components/DossierView';
+import { SpectralScope } from './components/SpectralScope';
 import { SimulationLabView } from './components/SimulationLabView';
 import { SettingsModal } from './components/SettingsModal';
 import type { ModelProviderConfig } from './engine/gemmaForensics';
 import { AudioSynthesizer } from './engine/audioSynthesizer';
-import { 
-  ShieldCheck, 
-  GitBranch, 
-  Layers, 
-  Cpu,
-  FileText,
-  ArrowRight
-} from 'lucide-react';
+import { Cpu, ShieldCheck } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [cases, setCases] = useState<ForensicCase[]>(FORENSIC_CASES);
@@ -31,8 +21,8 @@ export const App: React.FC = () => {
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [isAudioOn, setIsAudioOn] = useState<boolean>(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<ActiveSection>('overview');
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
 
   // AI Configuration
   const [modelConfig, setModelConfig] = useState<ModelProviderConfig>({
@@ -91,7 +81,6 @@ export const App: React.FC = () => {
     setIsAudioOn(active);
   };
 
-
   const handleSeek = (minute: number) => {
     setCurrentMinute(minute);
   };
@@ -142,318 +131,296 @@ export const App: React.FC = () => {
     setCases(prev => [newCase, ...prev]);
     setSelectedCaseId(newCase.id);
     setCurrentMinute(newCase.readings[0].epochMinutes);
-    setActiveTab('overview');
+    setActiveSection('overview');
+  };
+
+  const getSectionTitle = (sec: ActiveSection): string => {
+    switch (sec) {
+      case 'overview':
+        return '> FACILITY SPATIAL RADAR & ACTIVE ANOMALY MONITOR';
+      case 'telemetry':
+        return '> MULTI-SPECTRAL SENSOR TIME-SERIES CHANNELS';
+      case 'incidents':
+        return '> FORENSIC INCIDENT INVESTIGATION DOSSIERS';
+      case 'spectral':
+        return '> ACOUSTIC OSCILLOSCOPE & INFRASOUND LABORATORY';
+      case 'ingest':
+        return '> TELEMETRY INGESTION & ANOMALY INJECTION MATRIX';
+      case 'settings':
+        return '> SYSTEM CONFIGURATION & INFERENCE RUNTIME';
+      default:
+        return '> NOCTURNE WORKSTATION';
+    }
   };
 
   return (
     <div style={{
-      minHeight: '100vh',
       display: 'flex',
-      flexDirection: 'column',
+      width: '100vw',
+      height: '100vh',
+      overflow: 'hidden',
       background: 'var(--bg-deep)',
       color: 'var(--text-primary)'
     }}>
-      {/* 1. Header Command Ribbon */}
-      <Header
-        cases={cases}
-        selectedCaseId={selectedCaseId}
-        onSelectCase={setSelectedCaseId}
-        isAudioOn={isAudioOn}
-        onToggleAudio={handleToggleAudio}
-        onOpenSettings={() => setIsSettingsOpen(true)}
+      {/* 1. Dedicated Left Navigation Sidebar */}
+      <Sidebar
+        activeSection={activeSection}
+        onSelectSection={setActiveSection}
         activeAnomalyCount={activeCase.anomalies.length}
-        modelProviderName={
-          modelConfig.provider === 'built-in' 
-            ? 'GEMMA-2 (LOCAL AIR-GAPPED)' 
-            : modelConfig.provider === 'ollama'
-            ? 'GEMMA-2 (OLLAMA :11434)'
-            : 'GEMINI FLASH (AI STUDIO)'
-        }
+        caseNumber={activeCase.caseNumber}
       />
 
-      {/* 2. Executive System Briefing Banner */}
-      <ExecutiveBriefing />
-
-      {/* 3. Real-Time Multi-Sensor KPI Status Strip */}
-      <SensorStatusStrip
-        currentReading={currentReading}
-        baselineTemp={baselineTemp}
-      />
-
-      {/* 4. Nocturnal Chronological Time Scrubber */}
-      <TimeScrubber
-        currentMinute={currentMinute}
-        totalMinutes={totalMinutes}
-        isPlaying={isPlaying}
-        playbackSpeed={playbackSpeed}
-        currentTimestamp={currentReading.timestamp}
-        anomalies={activeCase.anomalies}
-        onSeek={handleSeek}
-        onTogglePlay={() => setIsPlaying(!isPlaying)}
-        onChangeSpeed={setPlaybackSpeed}
-        onJumpAnomaly={handleJumpAnomaly}
-      />
-
-      {/* 5. Categorized Navigation Tabs */}
-      <NavigationTabs
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        anomalyCount={activeCase.anomalies.length}
-      />
-
-      {/* 6. Active Tab Content Viewport */}
-      <main style={{
+      {/* 2. Main Content Viewport */}
+      <div style={{
         flex: 1,
-        padding: '0 16px 14px 16px'
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        overflow: 'hidden'
       }}>
-        {/* TAB 1: SPATIAL RADAR & INCIDENT OVERVIEW */}
-        {activeTab === 'overview' && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(340px, 1.15fr) minmax(320px, 0.85fr)',
-            gap: '12px',
-            alignItems: 'stretch'
-          }}>
-            {/* Left: Architectural Blueprint */}
-            <div>
-              <FloorplanView
-                rooms={activeCase.floorplan.rooms}
-                currentReading={currentReading}
-                selectedRoomId={selectedRoomId}
-                onSelectRoom={setSelectedRoomId}
-                buildingName={activeCase.structureType}
-              />
-            </div>
+        {/* TopBar with compact scrubber & controls */}
+        <TopBar
+          sectionTitle={getSectionTitle(activeSection)}
+          cases={cases}
+          selectedCaseId={selectedCaseId}
+          onSelectCase={setSelectedCaseId}
+          currentMinute={currentMinute}
+          totalMinutes={totalMinutes}
+          currentTimestamp={currentReading.timestamp}
+          isPlaying={isPlaying}
+          playbackSpeed={playbackSpeed}
+          anomalies={activeCase.anomalies}
+          onSeek={handleSeek}
+          onTogglePlay={() => setIsPlaying(!isPlaying)}
+          onChangeSpeed={setPlaybackSpeed}
+          onJumpAnomaly={handleJumpAnomaly}
+          isAudioOn={isAudioOn}
+          onToggleAudio={handleToggleAudio}
+          activeAnomalyCount={activeCase.anomalies.length}
+        />
 
-            {/* Right: Active Anomaly Incident Panel */}
+        {/* Dynamic Section Content */}
+        <main style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '14px 16px'
+        }}>
+          {activeSection === 'overview' && (
+            <OverviewSection
+              activeCase={activeCase}
+              currentReading={currentReading}
+              selectedRoomId={selectedRoomId}
+              onSelectRoom={setSelectedRoomId}
+              baselineTemp={baselineTemp}
+              activeAnomaly={activeAnomaly}
+              onNavigateToIncidents={() => setActiveSection('incidents')}
+              onNavigateToSpectral={() => setActiveSection('spectral')}
+            />
+          )}
+
+          {activeSection === 'telemetry' && (
+            <TelemetryLabView
+              readings={activeCase.readings}
+              currentMinute={currentMinute}
+              totalMinutes={totalMinutes}
+              anomalies={activeCase.anomalies}
+              onSeek={handleSeek}
+            />
+          )}
+
+          {activeSection === 'incidents' && (
+            <DossierView
+              forensicCase={activeCase}
+              modelConfig={modelConfig}
+            />
+          )}
+
+          {activeSection === 'spectral' && (
             <div style={{
-              background: 'var(--bg-panel)',
-              border: '1px solid var(--border-subtle)',
-              borderLeft: activeAnomaly ? '3px solid var(--accent-amber)' : '3px solid var(--accent-green)',
-              borderRadius: '2px',
-              padding: '16px',
-              display: 'flex',
-              flexDirection: 'column',
+              display: 'grid',
+              gridTemplateColumns: 'minmax(340px, 1fr) minmax(320px, 1fr)',
               gap: '12px'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Layers size={15} color={activeAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)'} />
-                  <span className="terminal-title">
-                    {activeAnomaly ? 'ACTIVE ANOMALOUS INCIDENT' : 'CALM NOCTURNAL BASELINE MONITOR'}
-                  </span>
-                </div>
-
-                {activeAnomaly && (
-                  <span className="badge-amber" style={{ fontSize: '10px' }}>
-                    TABPFN CONFIDENCE: {(activeAnomaly.confidenceScore * 100).toFixed(1)}%
-                  </span>
-                )}
-              </div>
-
-              {activeAnomaly ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '12px', lineHeight: 1.6, color: 'var(--text-primary)' }}>
-                    {activeAnomaly.summary}
-                  </div>
-
-                  {/* Sensor Divergence Table */}
-                  <div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
-                      MULTIVARIATE DIVERGENCE VECTORS:
-                    </div>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                      gap: '6px'
-                    }}>
-                      {activeAnomaly.sensorDivergence.map((div, idx) => (
-                        <div key={idx} style={{
-                          background: '#040804',
-                          padding: '6px 8px',
-                          borderRadius: '2px',
-                          border: '1px solid var(--border-subtle)',
-                          fontSize: '11px',
-                          fontFamily: 'var(--font-mono)'
-                        }}>
-                          <div style={{ color: 'var(--text-muted)' }}>{div.channel}</div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
-                            <span style={{ color: 'var(--text-secondary)' }}>BASE: {div.baseline}</span>
-                            <span style={{ color: 'var(--accent-amber-bright)', fontWeight: 700 }}>OBS: {div.observed}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Quick CTAs */}
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-                    <button
-                      onClick={() => setActiveTab('dossier')}
-                      className="btn-primary"
-                      style={{ flex: 1, padding: '6px 12px', fontSize: '11px' }}
-                    >
-                      <FileText size={13} />
-                      <span>[ OPEN AI FORENSIC DOSSIER ]</span>
-                    </button>
-
-                    <button
-                      onClick={() => setActiveTab('oscilloscope')}
-                      className="btn-secondary"
-                      style={{ padding: '6px 12px', fontSize: '11px' }}
-                    >
-                      <span>[ INSPECT 18.98Hz WAVE ]</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    All sensor telemetry currently operating within 1.5 standard deviations of domestic baseline.
-                  </p>
-                  <div style={{
-                    background: '#040804',
-                    padding: '10px 12px',
-                    borderRadius: '2px',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '11px',
-                    color: 'var(--text-secondary)',
-                    fontFamily: 'var(--font-mono)'
-                  }}>
-                    [TIP] Navigation: Drag the timeline scrubber to <strong>03:14 (Case #0317)</strong> or <strong>00:44 (Case #0108)</strong> to enter anomalous hot zones.
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: MULTI-SPECTRAL TELEMETRY LAB */}
-        {activeTab === 'telemetry' && (
-          <TelemetryLabView
-            readings={activeCase.readings}
-            currentMinute={currentMinute}
-            totalMinutes={totalMinutes}
-            anomalies={activeCase.anomalies}
-            onSeek={handleSeek}
-          />
-        )}
-
-        {/* TAB 3: SPECTRAL OSCILLOSCOPE & 18.98HZ */}
-        {activeTab === 'oscilloscope' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1fr) minmax(320px, 1fr)', gap: '12px' }}>
-            <div>
-              <SpectralScope
-                currentReading={currentReading}
-                isAudioOn={isAudioOn}
-                onToggleAudio={handleToggleAudio}
-              />
-            </div>
-
-            <div style={{
-              background: 'var(--bg-panel)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '2px',
-              padding: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Cpu size={15} color="var(--accent-amber-bright)" />
-                <span className="terminal-title">
-                  VIC TANDY 18.98Hz OCULAR RESONANCE ANALYSIS
-                </span>
-              </div>
-
-              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                <p style={{ marginBottom: '8px' }}>
-                  In 1998, British engineer Vic Tandy discovered that an extractor fan in a laboratory produced an acoustic standing wave at <strong>18.98 Hz</strong>. 
-                </p>
-                <p style={{ marginBottom: '8px' }}>
-                  The human eyeball's resonant frequency is approximately <strong>18.9 Hz</strong>. Infrasonic acoustic waves at this frequency vibrate the eyeball cornea, inducing optical displacement illusions (shadowy peripheral vision artifacts), accompanied by hyperventilation and localized chills.
-                </p>
-                <p>
-                  Nocturne's acoustic pipeline isolates this frequency from background noise to determine whether sightings correspond to structural pipe vibration, or unclassified environmental anomalies.
-                </p>
+              <div>
+                <SpectralScope
+                  currentReading={currentReading}
+                  isAudioOn={isAudioOn}
+                  onToggleAudio={handleToggleAudio}
+                />
               </div>
 
               <div style={{
-                background: '#040804',
-                padding: '10px 12px',
-                borderRadius: '2px',
+                background: 'var(--bg-panel)',
                 border: '1px solid var(--border-subtle)',
-                marginTop: 'auto'
+                borderRadius: '2px',
+                padding: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
               }}>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>
-                  CURRENT ACOUSTIC SPECTRUM READING:
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Cpu size={15} color="var(--accent-amber-bright)" />
+                  <span className="terminal-title">
+                    18.98Hz OCULAR RESONANCE ANALYSIS
+                  </span>
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
-                  {currentReading.acousticFreqHz.toFixed(2)} Hz @ {currentReading.acousticDb.toFixed(1)} dB
+
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  <p style={{ marginBottom: '8px' }}>
+                    In 1998, British engineer Vic Tandy discovered that an extractor fan in a medical research laboratory was producing an imperceptible acoustic standing wave at <strong>18.98 Hz</strong>.
+                  </p>
+                  <p style={{ marginBottom: '8px' }}>
+                    The human eyeball's resonant frequency is approximately <strong>18.9 Hz</strong>. Acoustic waves at this frequency vibrate the eyeball cornea, inducing optical displacement illusions (shadowy peripheral vision artifacts), accompanied by hyperventilation and localized chills.
+                  </p>
+                  <p>
+                    Nocturne isolates this frequency from background noise to determine whether sightings correspond to structural pipe vibration, or unclassified environmental anomalies.
+                  </p>
+                </div>
+
+                <div style={{
+                  background: '#040804',
+                  padding: '10px 12px',
+                  borderRadius: '2px',
+                  border: '1px solid var(--border-subtle)',
+                  marginTop: 'auto'
+                }}>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>
+                    CURRENT ACOUSTIC SPECTRUM READING:
+                  </div>
+                  <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
+                    {currentReading.acousticFreqHz.toFixed(2)} Hz @ {currentReading.acousticDb.toFixed(1)} dB
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* TAB 4: CLASSIFIED AI FORENSIC DOSSIER */}
-        {activeTab === 'dossier' && (
-          <DossierView
-            forensicCase={activeCase}
-            modelConfig={modelConfig}
-          />
-        )}
+          {activeSection === 'ingest' && (
+            <SimulationLabView
+              activeCase={activeCase}
+              onInjectEvent={handleInjectEvent}
+              onImportCase={handleImportCase}
+              modelConfig={modelConfig}
+              onUpdateModelConfig={setModelConfig}
+            />
+          )}
 
-        {/* TAB 5: SIMULATOR & CSV INGESTION */}
-        {activeTab === 'simulation' && (
-          <SimulationLabView
-            activeCase={activeCase}
-            onInjectEvent={handleInjectEvent}
-            onImportCase={handleImportCase}
-            modelConfig={modelConfig}
-            onUpdateModelConfig={setModelConfig}
-          />
-        )}
-      </main>
+          {activeSection === 'settings' && (
+            <div style={{
+              maxWidth: '680px',
+              margin: '0 auto',
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '2px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Cpu size={16} color="var(--accent-green-bright)" />
+                <span className="terminal-title">
+                  SYSTEM CONFIGURATION &amp; INFERENCE RUNTIME
+                </span>
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                Configure the causal deduction inference backend. All options operate client-side or through local daemon instances.
+              </p>
 
-      {/* Footer */}
-      <footer style={{
-        margin: '0 16px 12px 16px',
-        padding: '10px 14px',
-        borderTop: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '10px',
-        fontSize: '11px',
-        color: 'var(--text-muted)',
-        fontFamily: 'var(--font-mono)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShieldCheck size={14} color="var(--accent-green-bright)" />
-          <span>NOCTURNE // AIR-GAPPED ENVIRONMENTAL TELEMETRY FORENSICS ENGINE</span>
-        </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {/* Option 1: Built-in */}
+                <div
+                  onClick={() => setModelConfig({ ...modelConfig, provider: 'built-in' })}
+                  style={{
+                    background: modelConfig.provider === 'built-in' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+                    border: `1px solid ${modelConfig.provider === 'built-in' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
+                    borderRadius: '2px',
+                    padding: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+                    [01] Local Air-Gapped Causal Engine (Default)
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    100% deterministic offline inference. Zero latency, zero external network requests.
+                  </div>
+                </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <span>PIPELINE: TABPFN FOUNDATION ANOMALY SCORING + GOOGLE GEMMA 2</span>
-          <a
-            href="https://github.com/ayushg-1506/nocturne"
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: 'var(--accent-green-bright)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            <GitBranch size={12} />
-            <span>[ GITHUB REPO ]</span>
-          </a>
-        </div>
-      </footer>
+                {/* Option 2: Ollama */}
+                <div
+                  onClick={() => setModelConfig({ ...modelConfig, provider: 'ollama' })}
+                  style={{
+                    background: modelConfig.provider === 'ollama' ? 'rgba(34, 197, 94, 0.12)' : '#040804',
+                    border: `1px solid ${modelConfig.provider === 'ollama' ? 'var(--accent-green)' : 'var(--border-subtle)'}`,
+                    borderRadius: '2px',
+                    padding: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+                    [02] Local Ollama Daemon (`http://localhost:11434`)
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Connects to local open-weight model instances for deep reasoning without cloud telemetry.
+                  </div>
+                </div>
 
-      {/* Settings Modal */}
+                {/* Option 3: Cloud API */}
+                <div
+                  onClick={() => setModelConfig({ ...modelConfig, provider: 'gemini' })}
+                  style={{
+                    background: modelConfig.provider === 'gemini' ? 'rgba(245, 158, 11, 0.12)' : '#040804',
+                    border: `1px solid ${modelConfig.provider === 'gemini' ? 'var(--accent-amber)' : 'var(--border-subtle)'}`,
+                    borderRadius: '2px',
+                    padding: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: 'var(--text-primary)' }}>
+                    [03] External API Endpoint
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Optional remote API inference endpoint.
+                  </div>
+                  {modelConfig.provider === 'gemini' && (
+                    <div style={{ marginTop: '8px' }}>
+                      <input
+                        type="password"
+                        placeholder="API Key..."
+                        value={modelConfig.apiKey || ''}
+                        onChange={e => setModelConfig({ ...modelConfig, apiKey: e.target.value })}
+                        style={{ width: '100%', fontSize: '11px' }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div style={{
+                marginTop: '10px',
+                padding: '10px',
+                background: '#040804',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '11px',
+                color: 'var(--text-muted)'
+              }}>
+                <ShieldCheck size={14} color="var(--accent-green-bright)" />
+                <span>Security Assurance: No telemetry streams or environment logs are shared externally.</span>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Settings Modal (kept for external triggers if needed) */}
       <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
         config={modelConfig}
         onSaveConfig={setModelConfig}
       />

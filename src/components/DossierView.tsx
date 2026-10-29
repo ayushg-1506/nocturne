@@ -159,10 +159,10 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
       {isLoading || !dossier ? (
         <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
           <div className="pulse-green" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-green-bright)' }}>
-            &gt; EXECUTING GEMMA 2 DUAL-VERDICT REASONING MATRIX...
+            &gt; EXECUTING CAUSAL REASONING MATRIX...
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>
-            Cross-referencing TabPFN multivariate residual shifts with physical thermodynamics
+            Cross-referencing multi-variate statistical residual shifts with physical thermodynamics
           </div>
         </div>
       ) : (

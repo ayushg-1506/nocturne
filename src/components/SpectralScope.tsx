@@ -190,7 +190,7 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
             <Activity size={12} color="var(--accent-green-bright)" />
-            <span>TABPFN STATISTICAL CLASSIFICATION:</span>
+            <span>STATISTICAL ANOMALY CLASSIFICATION:</span>
           </div>
           <span style={{ fontSize: '11px', fontWeight: 700, color: isInfrasonic || isHighEmf ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)', fontFamily: 'var(--font-mono)' }}>
             {isInfrasonic && isHighEmf 

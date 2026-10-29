@@ -75,7 +75,7 @@ export const TelemetryCharts: React.FC<TelemetryChartsProps> = ({
           </span>
         </div>
         <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          SYNCHRONIZED SENSOR STREAM [TABPFN RESIDUALS]
+          SYNCHRONIZED MULTI-VARIATE SENSOR STREAM
         </span>
       </div>
 

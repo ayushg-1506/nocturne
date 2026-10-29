@@ -120,7 +120,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    [02] Google AI Studio (Gemini / Gemma API)
+                    [02] Cloud API Inference Endpoint
                   </div>
                   <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                     Connects directly to Google's cloud developer API endpoint.
@@ -148,7 +148,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                    [03] Local Ollama Instance (`gemma2:9b`)
+                    [03] Local Ollama Instance (:11434)
                   </div>
                   <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                     Points to local port 11434 for pure offline model inference.
