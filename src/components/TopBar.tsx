@@ -58,7 +58,7 @@ export const TopBar: React.FC<TopBarProps> = ({
     <header style={{
       height: '52px',
       minHeight: '52px',
-      background: 'var(--bg-panel)',
+      background: '#000000',
       borderBottom: '1px solid var(--border-subtle)',
       display: 'flex',
       alignItems: 'center',

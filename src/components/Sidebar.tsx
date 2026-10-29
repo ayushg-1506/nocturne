@@ -7,7 +7,7 @@ import {
   UploadCloud, 
   SlidersHorizontal,
   Terminal,
-  ShieldCheck,
+  ShieldCheck
 } from 'lucide-react';
 
 export type ActiveSection = 'overview' | 'telemetry' | 'incidents' | 'spectral' | 'ingest' | 'settings';
@@ -30,47 +30,47 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'overview',
       index: '01',
       label: 'SPATIAL RADAR',
-      icon: <Radar size={15} />
+      icon: <Radar size={14} />
     },
     {
       id: 'telemetry',
       index: '02',
       label: 'TELEMETRY STREAMS',
-      icon: <Activity size={15} />
+      icon: <Activity size={14} />
     },
     {
       id: 'incidents',
       index: '03',
       label: 'INCIDENT DOSSIERS',
-      icon: <FileText size={15} />,
+      icon: <FileText size={14} />,
       badge: activeAnomalyCount > 0 ? `${activeAnomalyCount}` : undefined
     },
     {
       id: 'spectral',
       index: '04',
       label: 'SPECTRAL LAB',
-      icon: <Radio size={15} />
+      icon: <Radio size={14} />
     },
     {
       id: 'ingest',
       index: '05',
       label: 'DATA INGEST & SIM',
-      icon: <UploadCloud size={15} />
+      icon: <UploadCloud size={14} />
     },
     {
       id: 'settings',
       index: '06',
       label: 'SYSTEM CONFIG',
-      icon: <SlidersHorizontal size={15} />
+      icon: <SlidersHorizontal size={14} />
     }
   ];
 
   return (
     <aside style={{
-      width: '240px',
-      minWidth: '240px',
+      width: '230px',
+      minWidth: '230px',
       height: '100vh',
-      background: '#040704',
+      background: '#020402',
       borderRight: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
@@ -92,7 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div style={{
             width: '32px',
             height: '32px',
-            background: 'rgba(34, 197, 94, 0.12)',
+            background: '#071208',
             border: '1px solid var(--accent-green)',
             borderRadius: '2px',
             display: 'flex',
@@ -100,33 +100,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
             justifyContent: 'center',
             flexShrink: 0
           }}>
-            <Terminal size={17} color="var(--accent-green-bright)" />
+            <Terminal size={16} color="var(--accent-green-bright)" />
           </div>
 
           <div>
             <div style={{
-              fontSize: '16px',
+              fontSize: '14px',
               fontWeight: 800,
               letterSpacing: '0.12em',
-              color: 'var(--accent-green-bright)',
-              fontFamily: 'var(--font-mono)'
+              color: '#ffffff',
+              fontFamily: 'var(--font-mono)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
             }}>
-              NOCTURNE
+              <span>NOCTURNE</span>
+              <span style={{ color: 'var(--accent-green-bright)', fontSize: '11px' }}>_</span>
             </div>
             <div style={{
               fontSize: '9px',
               color: 'var(--text-muted)',
               fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.04em'
+              letterSpacing: '0.05em'
             }}>
               FORENSICS v2.4.0
             </div>
           </div>
         </div>
 
-        {/* Section Navigation */}
-        <div style={{ fontSize: '10px', color: 'var(--text-muted)', paddingLeft: '8px', marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
-          NAVIGATION
+        {/* Section Navigation Header */}
+        <div style={{
+          fontSize: '9px',
+          fontWeight: 700,
+          color: 'var(--text-dim)',
+          letterSpacing: '0.08em',
+          paddingLeft: '8px',
+          marginBottom: '8px',
+          fontFamily: 'var(--font-mono)'
+        }}>
+          SECTION ROUTING
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -141,11 +153,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   width: '100%',
-                  padding: '9px 10px',
+                  padding: '8px 10px',
                   borderRadius: '2px',
-                  background: isActive ? 'rgba(34, 197, 94, 0.15)' : 'transparent',
-                  border: `1px solid ${isActive ? 'var(--accent-green)' : 'transparent'}`,
-                  color: isActive ? 'var(--accent-green-bright)' : 'var(--text-secondary)',
+                  background: isActive ? '#081409' : 'transparent',
+                  border: isActive ? '1px solid var(--border-highlight)' : '1px solid transparent',
+                  borderLeft: isActive ? '3px solid var(--accent-green)' : '3px solid transparent',
+                  color: isActive ? '#ffffff' : 'var(--text-muted)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
                   fontWeight: isActive ? 700 : 500,
@@ -155,11 +168,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   transition: 'all 0.15s ease'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                  <span style={{ color: isActive ? 'var(--accent-green-bright)' : 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: isActive ? 'var(--accent-green-bright)' : 'var(--text-dim)' }}>
                     {item.icon}
                   </span>
-                  <span>[{item.index}] {item.label}</span>
+                  <span>
+                    <span style={{ color: isActive ? 'var(--accent-green-bright)' : 'var(--text-dim)', marginRight: '5px' }}>
+                      [{item.index}]
+                    </span>
+                    {item.label}
+                  </span>
                 </div>
 
                 {item.badge && (
@@ -175,8 +193,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom: System Status & Active Case Info */}
       <div style={{
-        padding: '10px',
-        background: '#020502',
+        padding: '12px 10px',
+        background: '#040804',
         border: '1px solid var(--border-subtle)',
         borderRadius: '2px',
         display: 'flex',
@@ -186,19 +204,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
         fontFamily: 'var(--font-mono)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ color: 'var(--accent-green-bright)', fontWeight: 700 }} className="pulse-green">
-            * SYSTEM ONLINE
+          <span style={{ color: 'var(--accent-green-bright)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-green-bright)' }} className="pulse-green" />
+            ONLINE
           </span>
-          <span className="badge-green" style={{ fontSize: '8px', padding: '1px 4px' }}>
+          <span className="badge-green" style={{ fontSize: '8px', padding: '1px 5px' }}>
             AIR-GAPPED
           </span>
         </div>
 
-        <div style={{ color: 'var(--text-muted)' }}>
-          CASE: <strong style={{ color: 'var(--text-primary)' }}>{caseNumber}</strong>
+        <div style={{ color: 'var(--text-muted)', marginTop: '2px' }}>
+          CASE: <strong style={{ color: '#ffffff' }}>{caseNumber}</strong>
         </div>
 
-        <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '9px', marginTop: '2px' }}>
           <ShieldCheck size={11} color="var(--accent-green)" />
           <span>ZERO CLOUD TELEMETRY</span>
         </div>

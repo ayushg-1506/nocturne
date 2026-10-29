@@ -78,7 +78,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           </div>
           <div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>[CH-01] AMBIENT TEMP</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: isColdAnomaly ? 'var(--accent-amber-bright)' : '#ffffff' }}>
               {currentReading.temperatureC.toFixed(1)}°C{' '}
               <span style={{ fontSize: '10px', color: isColdAnomaly ? 'var(--accent-amber)' : 'var(--text-muted)' }}>
                 ({tempDelta > 0 ? '+' : ''}{tempDelta.toFixed(1)}°)
@@ -112,7 +112,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           </div>
           <div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>[CH-02] ACOUSTIC / INFRASOUND</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: isInfrasonic ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: isInfrasonic ? 'var(--accent-amber-bright)' : '#ffffff' }}>
               {currentReading.acousticDb.toFixed(1)} dB{' '}
               <span style={{ fontSize: '10px', color: isInfrasonic ? 'var(--accent-crimson)' : 'var(--text-muted)' }}>
                 ({currentReading.acousticFreqHz.toFixed(1)}Hz)
@@ -146,7 +146,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           </div>
           <div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>[CH-03] EMF FLUX</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber-bright)' : '#ffffff' }}>
               {currentReading.emfFluxUtd.toFixed(2)} µT{' '}
               <span style={{ fontSize: '10px', color: isEmfAnomaly ? 'var(--accent-amber)' : 'var(--text-muted)' }}>
                 (Base &lt; 0.3)

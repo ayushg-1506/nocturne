@@ -28,7 +28,8 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
       padding: '16px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px'
+      gap: '12px',
+      height: '100%'
     }}>
       {/* Blueprint Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
@@ -50,15 +51,15 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px', color: 'var(--text-muted)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ width: '8px', height: '8px', background: 'var(--accent-green)', borderRadius: '1px' }} />
-            <span>NOMINAL</span>
+            <span style={{ color: '#ffffff' }}>NOMINAL</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ width: '8px', height: '8px', background: 'var(--accent-amber)', borderRadius: '1px' }} />
-            <span>THERMAL DRIFT</span>
+            <span style={{ color: '#ffffff' }}>THERMAL DRIFT</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ width: '8px', height: '8px', background: 'var(--accent-crimson)', borderRadius: '1px' }} />
-            <span>BREACH / HOT ZONE</span>
+            <span style={{ color: '#ffffff' }}>BREACH / HOT ZONE</span>
           </div>
         </div>
       </div>
@@ -67,8 +68,9 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
       <div style={{
         position: 'relative',
         width: '100%',
-        minHeight: '360px',
-        background: '#040804',
+        flex: 1,
+        minHeight: '340px',
+        background: '#020402',
         border: '1px solid var(--border-subtle)',
         borderRadius: '2px',
         overflow: 'hidden'
@@ -80,19 +82,19 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
           {/* Subtle Terminal Grid Pattern */}
           <defs>
             <pattern id="termGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34, 197, 94, 0.05)" strokeWidth="0.8" />
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(34, 197, 94, 0.04)" strokeWidth="0.8" />
             </pattern>
             <linearGradient id="termNominal" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#081408" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="#060c07" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#030704" stopOpacity="0.95" />
             </linearGradient>
             <linearGradient id="termCold" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
-              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="rgba(245, 158, 11, 0.16)" />
+              <stop offset="100%" stopColor="#050905" stopOpacity="0.95" />
             </linearGradient>
             <linearGradient id="termAlert" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(239, 68, 68, 0.25)" />
-              <stop offset="100%" stopColor="#040a04" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="rgba(239, 68, 68, 0.20)" />
+              <stop offset="100%" stopColor="#050905" stopOpacity="0.95" />
             </linearGradient>
           </defs>
 
@@ -116,7 +118,7 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
             }
 
             if (isSelected) {
-              strokeColor = 'var(--accent-green-bright)';
+              strokeColor = 'var(--accent-green)';
             }
 
             return (
@@ -138,11 +140,11 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                   strokeDasharray={isSelected ? '4 2' : 'none'}
                 />
 
-                {/* Room Label */}
+                {/* Room Label: Pure White for clean readability, Amber if cold anomaly in hot zone */}
                 <text
                   x={room.x + 10}
                   y={room.y + 20}
-                  fill={isHotZone && isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green-bright)'}
+                  fill={isHotZone && isColdAnomaly ? 'var(--accent-amber-bright)' : '#ffffff'}
                   fontSize={room.width < 100 ? "9" : "11"}
                   fontWeight="700"
                   fontFamily="var(--font-mono)"
@@ -152,7 +154,7 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                 </text>
 
                 {/* Sensor tags within room */}
-                <g transform={`translate(${room.x + 10}, ${room.y + 36})`}>
+                <g transform={`translate(${room.x + room.width - 24}, ${room.y + 12})`}>
                   {room.sensorIds.map((sid: string, idx: number) => (
                     <text
                       key={sid}
@@ -193,97 +195,95 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                   </circle>
                 )}
 
-                {/* Motion Ripple Animation */}
+                {/* Motion Detection Beacon */}
                 {isMotionHere && (
-                  <circle
-                    cx={room.x + room.width / 2}
-                    cy={room.y + room.height / 2}
-                    r="15"
-                    fill="rgba(239, 68, 68, 0.2)"
-                    stroke="var(--accent-crimson)"
-                    strokeWidth="1.5"
-                  >
-                    <animate attributeName="r" values="8;40" dur="1.2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="1;0" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
+                  <g transform={`translate(${room.x + room.width - 24}, ${room.y + 12})`}>
+                    <circle cx="6" cy="6" r="5" fill="var(--accent-crimson)" className="pulse-crimson" />
+                    <circle cx="6" cy="6" r="10" fill="none" stroke="var(--accent-crimson)" strokeWidth="1" opacity="0.5">
+                      <animate attributeName="r" values="6;16;6" dur="1s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.8;0;0.8" dur="1s" repeatCount="indefinite" />
+                    </circle>
+                  </g>
                 )}
               </g>
             );
           })}
 
-          {/* Door Latch Sensor Icon between rooms */}
-          <g transform="translate(340, 95)">
+          {/* Door Latch Sensor Graphic */}
+          <g transform="translate(245, 125)">
             <circle
               cx="0"
               cy="0"
               r="8"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.25)'}
+              fill={currentReading.doorLatchState === 'SECURE' ? '#061208' : 'rgba(239, 68, 68, 0.2)'}
               stroke={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green)' : 'var(--accent-crimson)'}
-              strokeWidth="1.2"
+              strokeWidth="1.5"
             />
             <text
-              x="12"
+              x="14"
               y="4"
-              fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)'}
+              fill={currentReading.doorLatchState === 'SECURE' ? '#d4d4d8' : 'var(--accent-crimson-bright)'}
               fontSize="9"
               fontFamily="var(--font-mono)"
-              fontWeight="700"
+              fontWeight="600"
             >
-              LATCH: {currentReading.doorLatchState}
+              LATCH: <tspan fill={currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)'}>{currentReading.doorLatchState}</tspan>
             </text>
           </g>
         </svg>
+      </div>
 
-        {/* HUD Overlay Bar */}
-        <div style={{
-          position: 'absolute',
-          bottom: '8px',
-          left: '8px',
-          right: '8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          background: 'rgba(4, 8, 4, 0.92)',
-          padding: '6px 12px',
-          borderRadius: '2px',
-          border: '1px solid var(--border-subtle)',
-          fontSize: '11px',
-          fontFamily: 'var(--font-mono)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Thermometer size={13} color={isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
-            <span style={{ color: 'var(--text-muted)' }}>AMB TEMP:</span>
-            <span style={{ fontWeight: 700, color: isColdAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
-              {currentReading.temperatureC.toFixed(1)}°C
-            </span>
-          </div>
+      {/* Blueprint Sub-Strip Telemetry */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '10px',
+        padding: '8px 12px',
+        background: '#040804',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: '2px',
+        fontSize: '11px',
+        fontFamily: 'var(--font-mono)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Thermometer size={12} color="var(--accent-green)" />
+          <span style={{ color: 'var(--text-muted)' }}>AMB TEMP:</span>
+          <span style={{ color: isColdAnomaly ? 'var(--accent-amber-bright)' : '#ffffff', fontWeight: 700 }}>
+            {currentReading.temperatureC.toFixed(1)}°C
+          </span>
+        </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Mic size={13} color={currentReading.acousticDb > 35 ? 'var(--accent-crimson-bright)' : 'var(--accent-green)'} />
-            <span style={{ color: 'var(--text-muted)' }}>ACOUSTIC:</span>
-            <span style={{ fontWeight: 700, color: currentReading.acousticDb > 35 ? 'var(--accent-crimson-bright)' : 'var(--text-primary)' }}>
-              {currentReading.acousticDb.toFixed(1)} dB ({currentReading.acousticFreqHz.toFixed(1)}Hz)
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Mic size={12} color="var(--accent-green)" />
+          <span style={{ color: 'var(--text-muted)' }}>ACOUSTIC:</span>
+          <span style={{ color: '#ffffff', fontWeight: 700 }}>
+            {currentReading.acousticDb.toFixed(1)} dB{' '}
+            <span style={{ color: currentReading.acousticFreqHz >= 18.0 && currentReading.acousticFreqHz <= 20.0 ? 'var(--accent-amber-bright)' : 'var(--text-muted)' }}>
+              ({currentReading.acousticFreqHz.toFixed(1)}Hz)
             </span>
-          </div>
+          </span>
+        </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Zap size={13} color={isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--accent-green)'} />
-            <span style={{ color: 'var(--text-muted)' }}>EMF FLUX:</span>
-            <span style={{ fontWeight: 700, color: isEmfAnomaly ? 'var(--accent-amber-bright)' : 'var(--text-primary)' }}>
-              {currentReading.emfFluxUtd.toFixed(2)} µT
-            </span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Zap size={12} color="var(--accent-green)" />
+          <span style={{ color: 'var(--text-muted)' }}>EMF FLUX:</span>
+          <span style={{ color: isEmfAnomaly ? 'var(--accent-amber-bright)' : '#ffffff', fontWeight: 700 }}>
+            {currentReading.emfFluxUtd.toFixed(2)} µT
+          </span>
+        </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {currentReading.doorLatchState === 'SECURE' ? (
-              <Lock size={13} color="var(--accent-green-bright)" />
-            ) : (
-              <Unlock size={13} color="var(--accent-crimson-bright)" />
-            )}
-            <span style={{ color: 'var(--text-muted)' }}>PORTAL:</span>
-            <span style={{ fontWeight: 700, color: currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)' }}>
-              [{currentReading.doorLatchState}]
-            </span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {currentReading.doorLatchState === 'SECURE' ? (
+            <Lock size={12} color="var(--accent-green)" />
+          ) : (
+            <Unlock size={12} color="var(--accent-crimson)" />
+          )}
+          <span style={{ color: 'var(--text-muted)' }}>PORTAL:</span>
+          <span style={{ color: currentReading.doorLatchState === 'SECURE' ? 'var(--accent-green-bright)' : 'var(--accent-crimson-bright)', fontWeight: 700 }}>
+            [{currentReading.doorLatchState}]
+          </span>
         </div>
       </div>
     </div>

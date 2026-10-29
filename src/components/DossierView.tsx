@@ -41,40 +41,39 @@ export const DossierView: React.FC<DossierViewProps> = ({
 
   const handleCopyMarkdown = () => {
     if (!dossier) return;
-    const md = `# NOCTURNE FORENSIC INCIDENT DOSSIER
-**Case:** ${forensicCase.caseNumber} — ${forensicCase.title}
-**Location:** ${forensicCase.location}
-**Structure:** ${forensicCase.structureType}
-**Chain-of-Custody Seal:** \`${dossier.sha256Seal}\`
-**Inference Engine:** ${dossier.engine}
-
-## Executive Summary
-${dossier.executiveSummary}
-
-## Dual-Verdict Forensic Matrix
-
-### 1. Rational Physical Hypothesis (${dossier.rationalVerdict.physicalPlausibilityScore}% Plausibility)
-**Headline:** ${dossier.rationalVerdict.headline}
-**Probable Mechanical Causes:**
-${dossier.rationalVerdict.probableCauses.map((c: string) => `- ${c}`).join('\n')}
-**Technical Recommendation:** ${dossier.rationalVerdict.technicalRecommendation}
-
-### 2. Anomalous Divergence Hypothesis (${dossier.paranormalVerdict.spectralPlausibilityScore}% Plausibility)
-**Headline:** ${dossier.paranormalVerdict.headline}
-**Phenomenon Context:** ${dossier.paranormalVerdict.loreContext}
-**Forensic Anomaly Deduction:** ${dossier.paranormalVerdict.environmentalParapsychologyDeduction}
-
-## Telemetry Evidence Audit Trail
-| Timestamp | Event | Divergence Proof |
-|-----------|-------|------------------|
-${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: string }) => `| ${t.time} | ${t.event} | ${t.sensorProof} |`).join('\n')}
-`;
-
-    navigator.clipboard.writeText(md);
+    const parts = [
+      '# NOCTURNE FORENSIC INCIDENT DOSSIER',
+      `**Case:** ${forensicCase.caseNumber} — ${forensicCase.title}`,
+      `**Location:** ${forensicCase.location}`,
+      `**Structure:** ${forensicCase.structureType}`,
+      `**Chain-of-Custody Seal:** \`${dossier.sha256Seal}\``,
+      `**Inference Engine:** ${dossier.engine}`,
+      '',
+      '## Executive Summary',
+      dossier.executiveSummary,
+      '',
+      '## Dual-Verdict Forensic Matrix',
+      '',
+      `### 1. Rational Physical Hypothesis (${dossier.rationalVerdict.physicalPlausibilityScore}% Plausibility)`,
+      `**Headline:** ${dossier.rationalVerdict.headline}`,
+      '**Probable Mechanical Causes:**',
+      ...dossier.rationalVerdict.probableCauses.map((c: string) => `- ${c}`),
+      `**Technical Recommendation:** ${dossier.rationalVerdict.technicalRecommendation}`,
+      '',
+      `### 2. Anomalous Divergence Hypothesis (${dossier.paranormalVerdict.spectralPlausibilityScore}% Plausibility)`,
+      `**Headline:** ${dossier.paranormalVerdict.headline}`,
+      `**Phenomenon Context:** ${dossier.paranormalVerdict.loreContext}`,
+      `**Forensic Anomaly Deduction:** ${dossier.paranormalVerdict.environmentalParapsychologyDeduction}`,
+      '',
+      '## Telemetry Evidence Audit Trail',
+      '| Timestamp | Event | Divergence Proof |',
+      '|-----------|-------|------------------|',
+      ...dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: string }) => `| ${t.time} | ${t.event} | ${t.sensorProof} |`)
+    ];
+    navigator.clipboard.writeText(parts.join('\n'));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
   const handleExportJson = () => {
     if (!dossier) return;
     const blob = new Blob([JSON.stringify(dossier, null, 2)], { type: 'application/json' });
@@ -88,7 +87,6 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
 
   return (
     <div style={{
-      margin: '0 16px 14px 16px',
       background: 'var(--bg-panel)',
       border: '1px solid var(--border-subtle)',
       borderRadius: '2px',
@@ -108,7 +106,19 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
         paddingBottom: '12px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <FileText size={18} color="var(--accent-green-bright)" />
+          <div style={{
+            width: '28px',
+            height: '28px',
+            background: '#081409',
+            border: '1px solid var(--accent-green)',
+            borderRadius: '2px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <FileText size={15} color="var(--accent-green-bright)" />
+          </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span className="terminal-title">
@@ -167,7 +177,7 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
         </div>
       ) : (
         <>
-          {/* Metadata Row */}
+          {/* Metadata Row: Greenish-black box with targeted green cryptographic hash */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -191,26 +201,29 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ color: 'var(--text-muted)' }}>INFERENCE ENGINE:</span>
-              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{dossier.engine}</span>
-              <span>|</span>
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{dossier.engine}</span>
+              <span style={{ color: 'var(--border-muted)' }}>|</span>
               <span style={{ color: 'var(--accent-amber-bright)', fontWeight: 700 }}>
                 ANOMALY CONFIDENCE: {dossier.confidenceIndex.toFixed(1)}%
               </span>
             </div>
           </div>
 
-          {/* Executive Summary */}
+          {/* Executive Summary: Greenish-black card with crisp white text */}
           <div style={{
             background: '#040804',
             border: '1px solid var(--border-subtle)',
             borderLeft: '3px solid var(--accent-green)',
             borderRadius: '2px',
-            padding: '10px 14px'
+            padding: '12px 14px'
           }}>
-            <div style={{ fontSize: '10px', color: 'var(--accent-green-bright)', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '4px' }}>
-              &gt; EXECUTIVE SUMMARY
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+              <span style={{ color: 'var(--accent-green-bright)', fontWeight: 800 }}>&gt;</span>
+              <span style={{ fontSize: '11px', color: '#ffffff', fontWeight: 700, letterSpacing: '0.05em' }}>
+                EXECUTIVE SUMMARY
+              </span>
             </div>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '12px', color: '#e4e4e7', lineHeight: 1.6 }}>
               {dossier.executiveSummary}
             </p>
           </div>
@@ -231,8 +244,9 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Cpu size={14} color="var(--accent-green-bright)" />
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-green-bright)', letterSpacing: '0.04em' }}>
-                    [01] RATIONAL PHYSICAL HYPOTHESIS
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', letterSpacing: '0.04em' }}>
+                    <span style={{ color: 'var(--accent-green-bright)', marginRight: '4px' }}>[01]</span>
+                    RATIONAL PHYSICAL HYPOTHESIS
                   </span>
                 </div>
                 <span className="badge-green" style={{ fontSize: '10px' }}>
@@ -240,7 +254,7 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
                 </span>
               </div>
 
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff' }}>
                 {dossier.rationalVerdict.headline}
               </div>
 
@@ -248,7 +262,7 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
                 <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px' }}>
                   PROBABLE MECHANICAL CAUSES:
                 </div>
-                <ul style={{ paddingLeft: '16px', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                <ul style={{ paddingLeft: '16px', fontSize: '11px', color: '#d4d4d8', lineHeight: 1.6 }}>
                   {dossier.rationalVerdict.probableCauses.map((cause: string, idx: number) => (
                     <li key={idx}>{cause}</li>
                   ))}
@@ -257,14 +271,14 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
 
               <div style={{
                 marginTop: 'auto',
-                background: 'rgba(34, 197, 94, 0.05)',
+                background: '#060e07',
                 padding: '8px 10px',
                 borderRadius: '2px',
                 fontSize: '11px',
                 borderLeft: '2px solid var(--accent-green)'
               }}>
                 <span style={{ color: 'var(--accent-green-bright)', fontWeight: 700 }}>RECOMMENDATION: </span>
-                <span style={{ color: 'var(--text-secondary)' }}>{dossier.rationalVerdict.technicalRecommendation}</span>
+                <span style={{ color: '#d4d4d8' }}>{dossier.rationalVerdict.technicalRecommendation}</span>
               </div>
             </div>
 
@@ -282,8 +296,9 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <AlertTriangle size={14} color="var(--accent-amber-bright)" />
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-amber-bright)', letterSpacing: '0.04em' }}>
-                    [02] ANOMALOUS DIVERGENCE HYPOTHESIS
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff', letterSpacing: '0.04em' }}>
+                    <span style={{ color: 'var(--accent-amber-bright)', marginRight: '4px' }}>[02]</span>
+                    ANOMALOUS DIVERGENCE HYPOTHESIS
                   </span>
                 </div>
                 <span className="badge-amber" style={{ fontSize: '10px' }}>
@@ -291,7 +306,7 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
                 </span>
               </div>
 
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff' }}>
                 {dossier.paranormalVerdict.headline}
               </div>
 
@@ -299,29 +314,32 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
                 <div style={{ fontSize: '10px', color: 'var(--accent-amber)', marginBottom: '4px' }}>
                   PHENOMENOLOGICAL &amp; ENVIRONMENTAL LORE:
                 </div>
-                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic' }}>
+                <p style={{ fontSize: '11px', color: '#d4d4d8', lineHeight: 1.6, fontStyle: 'italic' }}>
                   "{dossier.paranormalVerdict.loreContext}"
                 </p>
               </div>
 
               <div style={{
                 marginTop: 'auto',
-                background: 'rgba(245, 158, 11, 0.05)',
+                background: '#120d04',
                 padding: '8px 10px',
                 borderRadius: '2px',
                 fontSize: '11px',
                 borderLeft: '2px solid var(--accent-amber)'
               }}>
                 <span style={{ color: 'var(--accent-amber-bright)', fontWeight: 700 }}>DEDUCTION: </span>
-                <span style={{ color: 'var(--text-secondary)' }}>{dossier.paranormalVerdict.environmentalParapsychologyDeduction}</span>
+                <span style={{ color: '#d4d4d8' }}>{dossier.paranormalVerdict.environmentalParapsychologyDeduction}</span>
               </div>
             </div>
           </div>
 
           {/* Telemetry Evidence Audit Trail */}
           <div style={{ marginTop: '4px' }}>
-            <div style={{ fontSize: '11px', color: 'var(--accent-amber-bright)', fontWeight: 700, marginBottom: '6px' }}>
-              &gt; FORENSIC TELEMETRY EVIDENCE AUDIT TRAIL
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+              <span style={{ color: 'var(--accent-green-bright)', fontWeight: 800 }}>&gt;</span>
+              <span style={{ fontSize: '11px', color: '#ffffff', fontWeight: 700, letterSpacing: '0.05em' }}>
+                FORENSIC TELEMETRY EVIDENCE AUDIT TRAIL
+              </span>
             </div>
             <div style={{
               background: '#040804',
@@ -331,22 +349,28 @@ ${dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: s
             }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
                 <thead>
-                  <tr style={{ background: '#081208', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
-                    <th style={{ padding: '8px 12px', color: 'var(--accent-green-bright)' }}>TIMESTAMP</th>
-                    <th style={{ padding: '8px 12px', color: 'var(--text-muted)' }}>ANOMALOUS INCIDENT</th>
-                    <th style={{ padding: '8px 12px', color: 'var(--accent-amber-bright)' }}>DIVERGENCE PROOF</th>
+                  <tr style={{ background: '#060d07', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+                    <th style={{ padding: '8px 12px', color: '#a1a1aa', fontWeight: 600 }}>TIMESTAMP</th>
+                    <th style={{ padding: '8px 12px', color: '#a1a1aa', fontWeight: 600 }}>ANOMALOUS INCIDENT</th>
+                    <th style={{ padding: '8px 12px', color: '#a1a1aa', fontWeight: 600 }}>DIVERGENCE PROOF</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dossier.timelineOfEvents.map((t: { time: string; event: string; sensorProof: string }, idx: number) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                      <td style={{ padding: '8px 12px', color: 'var(--accent-green-bright)', whiteSpace: 'nowrap' }}>
+                  {dossier.timelineOfEvents.map((t, idx) => (
+                    <tr
+                      key={idx}
+                      style={{
+                        borderBottom: '1px solid var(--border-subtle)',
+                        background: idx % 2 === 0 ? 'transparent' : 'rgba(8, 16, 9, 0.4)'
+                      }}
+                    >
+                      <td style={{ padding: '8px 12px', color: 'var(--accent-green-bright)', fontWeight: 700, whiteSpace: 'nowrap' }}>
                         {t.time}
                       </td>
-                      <td style={{ padding: '8px 12px', color: 'var(--text-primary)' }}>
+                      <td style={{ padding: '8px 12px', color: '#ffffff', lineHeight: 1.5 }}>
                         {t.event}
                       </td>
-                      <td style={{ padding: '8px 12px', color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '8px 12px', color: '#d4d4d8', lineHeight: 1.5 }}>
                         {t.sensorProof}
                       </td>
                     </tr>

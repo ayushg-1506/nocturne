@@ -1,70 +1,67 @@
 /* =========================================================================
    NOCTURNE - ENVIRONMENTAL TELEMETRY FORENSICS & REASONING ENGINE
-   Tactical Terminal Theme: Phosphor Green, Tactical Amber & CRT Terminal Dark
+   Engineered Pure Black & Greenish-Black Precision Terminal Architecture
    ========================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Terminal Color Palette */
-  --bg-deep: #050805;
-  --bg-surface: #080d08;
-  --bg-panel: #0a120a;
-  --bg-panel-hover: #0f1c0f;
-  --bg-card: rgba(10, 18, 10, 0.85);
-  --bg-card-hover: rgba(16, 28, 16, 0.95);
-  --bg-glass: rgba(8, 15, 8, 0.8);
+  /* Surface Layers: Pure Black Canvas & Dark Greenish-Black Containers */
+  --bg-deep: #000000;              /* Pure pitch black background */
+  --bg-surface: #030604;           /* Deep inset surfaces */
+  --bg-panel: #060b07;             /* Sleek dark greenish-black card container */
+  --bg-panel-hover: #0a120b;       /* Subtle card hover state */
+  --bg-card: #070d08;
+  --bg-card-hover: #0b150d;
 
-  /* Terminal Borders */
-  --border-subtle: #162c16;
-  --border-active: #22c55e;
-  --border-highlight: #2e592e;
-  --border-amber: #4d360a;
-  --border-amber-active: #f59e0b;
-  --border-crimson: #521818;
+  /* Tactical Borders (Dark Greenish-Black lines) */
+  --border-subtle: #122013;        /* Dark greenish-black border */
+  --border-muted: #192e1b;         /* Medium divider border */
+  --border-highlight: #223f25;     /* Subtle focus border */
+  --border-active: #22c55e;        /* Phosphor green border for active elements */
+  --border-amber: #3d2806;         /* Subtle amber alert border */
+  --border-amber-active: #f59e0b;  /* Active warning amber */
+  --border-crimson: #421212;
   --border-crimson-active: #ef4444;
 
-  /* Tactical Accents */
+  /* Phosphor Green Highlights (Targeted Accents Only) */
   --accent-green: #22c55e;
   --accent-green-bright: #4ade80;
-  --accent-green-glow: rgba(34, 197, 94, 0.18);
+  --accent-green-neon: #00ff66;
   --accent-green-tint: rgba(34, 197, 94, 0.08);
+  --accent-green-glow: rgba(34, 197, 94, 0.20);
 
+  /* Tactical Amber Highlights (Warnings / Anomaly States) */
   --accent-amber: #f59e0b;
   --accent-amber-bright: #fbbf24;
-  --accent-amber-glow: rgba(245, 158, 11, 0.2);
   --accent-amber-tint: rgba(245, 158, 11, 0.08);
+  --accent-amber-glow: rgba(245, 158, 11, 0.20);
 
+  /* Alert Crimson (Critical Breaches) */
   --accent-crimson: #ef4444;
   --accent-crimson-bright: #f87171;
-  --accent-crimson-glow: rgba(239, 68, 68, 0.22);
   --accent-crimson-tint: rgba(239, 68, 68, 0.08);
-
-  --accent-cyan: #10b981;
-  --accent-cyan-glow: rgba(16, 185, 129, 0.2);
-
-  --accent-violet: #84cc16;
-  --accent-violet-glow: rgba(132, 204, 22, 0.2);
+  --accent-crimson-glow: rgba(239, 68, 68, 0.20);
 
   /* Monospace Typography */
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Space Mono', 'Cascadia Code', Menlo, Monaco, monospace;
-  --font-sans: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'JetBrains Mono', monospace;
 
-  /* Terminal Text Colors */
-  --text-primary: #ecfdf3;
-  --text-secondary: #98ba9c;
-  --text-muted: #537557;
-  --text-dim: #314b34;
-  --text-green: #4ade80;
-  --text-amber: #fbbf24;
-  --text-crimson: #f87171;
+  /* High-Contrast Neutral & Accent Typography */
+  --text-primary: #ffffff;         /* Crisp pure white for titles & main headings */
+  --text-secondary: #e4e4e7;       /* Clean neutral silver for descriptions & paragraphs */
+  --text-muted: #71717a;           /* Neutral zinc for metadata, timestamps & labels */
+  --text-dim: #3f3f46;             /* Dark muted indicators */
+  
+  --text-green: #4ade80;           /* Targeted phosphor green callouts & metrics */
+  --text-amber: #fbbf24;           /* Targeted amber alerts */
+  --text-crimson: #f87171;         /* Targeted critical alerts */
 
-  /* Shadows & Glows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.7);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.9);
   --shadow-glow-green: 0 0 16px -2px rgba(34, 197, 94, 0.25);
   --shadow-glow-amber: 0 0 16px -2px rgba(245, 158, 11, 0.25);
-  --shadow-glow-crimson: 0 0 16px -2px rgba(239, 68, 68, 0.25);
 
   --transition-fast: 120ms ease;
   --transition-normal: 200ms ease;
@@ -85,68 +82,29 @@ html, body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow: hidden;
   font-size: 13px;
-}
-
-/* Terminal subtle scanline & CRT micro-grid */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(34, 197, 94, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94, 0.02) 1px, transparent 1px);
-  background-size: 24px 24px, 24px 24px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.12),
-    rgba(0, 0, 0, 0.12) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.7;
-}
-
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 2;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-deep);
-  border-left: 1px solid var(--border-subtle);
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-highlight);
-  border-radius: 0px;
+  background: var(--border-muted);
+  border-radius: 1px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-green);
 }
 
-/* Selection */
 ::selection {
   background: rgba(34, 197, 94, 0.35);
-  color: #fff;
+  color: #ffffff;
 }
 
 /* Terminal Glass & Panels */
@@ -159,7 +117,7 @@ body::after {
 }
 
 .glass-panel:hover {
-  border-color: var(--border-highlight);
+  border-color: var(--border-muted);
 }
 
 .terminal-box {
@@ -168,11 +126,11 @@ body::after {
   border-radius: 2px;
 }
 
-/* Terminal Section Title */
+/* Section Title: Pure White Text with Phosphor Green Prompt */
 .terminal-title {
-  color: var(--accent-amber-bright);
+  color: #ffffff;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -183,7 +141,7 @@ body::after {
 
 .terminal-title::before {
   content: ">";
-  color: var(--accent-amber);
+  color: var(--accent-green-bright);
   font-weight: 800;
 }
 
@@ -199,12 +157,12 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--accent-green-tint);
+  background: #081409;
   border: 1px solid var(--accent-green);
-  color: var(--accent-green-bright);
+  color: #ffffff;
   padding: 6px 14px;
   border-radius: 2px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -212,7 +170,7 @@ button {
 
 .btn-primary:hover {
   background: rgba(34, 197, 94, 0.22);
-  color: #fff;
+  color: #ffffff;
   border-color: var(--accent-green-bright);
   box-shadow: var(--shadow-glow-green);
 }
@@ -222,21 +180,21 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: transparent;
+  background: #040804;
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 2px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .btn-secondary:hover {
-  background: rgba(22, 44, 22, 0.5);
+  background: #081008;
   border-color: var(--border-highlight);
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .btn-amber {
@@ -244,12 +202,12 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--accent-amber-tint);
+  background: #140d04;
   border: 1px solid var(--accent-amber);
   color: var(--accent-amber-bright);
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 2px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -257,60 +215,21 @@ button {
 
 .btn-amber:hover {
   background: rgba(245, 158, 11, 0.22);
-  color: #fff;
+  color: #ffffff;
   box-shadow: var(--shadow-glow-amber);
 }
 
-/* Terminal Segmented Tabs */
-.tab-container {
-  display: flex;
-  align-items: stretch;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 2px;
-  padding: 2px;
-  gap: 2px;
-}
-
-.tab-button {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.tab-button:hover {
-  color: var(--text-secondary);
-  background: rgba(22, 44, 22, 0.3);
-}
-
-.tab-button.active {
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid var(--accent-green);
-  color: var(--accent-green-bright);
-}
-
-/* Badge Styles */
+/* Badges */
 .badge-green {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  gap: 5px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.28);
   color: var(--accent-green-bright);
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 2px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   font-family: var(--font-mono);
@@ -319,13 +238,13 @@ button {
 .badge-amber {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  gap: 5px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.28);
   color: var(--accent-amber-bright);
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 2px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   font-family: var(--font-mono);
@@ -334,19 +253,19 @@ button {
 .badge-crimson {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  gap: 5px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.28);
   color: var(--accent-crimson-bright);
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 2px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   font-family: var(--font-mono);
 }
 
-/* Pulse Animation */
+/* Animations */
 @keyframes terminalPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
@@ -364,15 +283,15 @@ button {
   animation: terminalPulse 0.8s infinite ease-in-out;
 }
 
-/* Terminal Input */
+/* Inputs */
 input, textarea, select {
   font-family: var(--font-mono);
-  background: #040804;
+  background: #020402;
   border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
+  color: #ffffff;
   border-radius: 2px;
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 input:focus, textarea:focus, select:focus {
@@ -381,7 +300,6 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 1px var(--accent-green);
 }
 
-/* Code Snippets */
 code, pre {
   font-family: var(--font-mono);
 }

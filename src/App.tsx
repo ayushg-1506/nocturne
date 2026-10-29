@@ -137,19 +137,19 @@ export const App: React.FC = () => {
   const getSectionTitle = (sec: ActiveSection): string => {
     switch (sec) {
       case 'overview':
-        return '> FACILITY SPATIAL RADAR & ACTIVE ANOMALY MONITOR';
+        return 'FACILITY SPATIAL RADAR & ACTIVE ANOMALY MONITOR';
       case 'telemetry':
-        return '> MULTI-SPECTRAL SENSOR TIME-SERIES CHANNELS';
+        return 'MULTI-SPECTRAL SENSOR TIME-SERIES CHANNELS';
       case 'incidents':
-        return '> FORENSIC INCIDENT INVESTIGATION DOSSIERS';
+        return 'FORENSIC INCIDENT INVESTIGATION DOSSIERS';
       case 'spectral':
-        return '> ACOUSTIC OSCILLOSCOPE & INFRASOUND LABORATORY';
+        return 'ACOUSTIC OSCILLOSCOPE & INFRASOUND LABORATORY';
       case 'ingest':
-        return '> TELEMETRY INGESTION & ANOMALY INJECTION MATRIX';
+        return 'TELEMETRY INGESTION & ANOMALY INJECTION MATRIX';
       case 'settings':
-        return '> SYSTEM CONFIGURATION & INFERENCE RUNTIME';
+        return 'SYSTEM CONFIGURATION & INFERENCE RUNTIME';
       default:
-        return '> NOCTURNE WORKSTATION';
+        return 'NOCTURNE WORKSTATION';
     }
   };
 

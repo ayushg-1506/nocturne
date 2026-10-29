@@ -65,7 +65,7 @@ export class GemmaForensicsEngine {
         },
         paranormalVerdict: {
           headline: 'Localized Thermodynamic Extraction & Spectral Kinetic Manifestation',
-          loreContext: 'Traditional Día de los Muertos and parapsychological literature attribute sharp, boundary-contained cold spots to rapid endothermic energy absorption required for physical kinetic interaction across thresholds.',
+          loreContext: 'Historical anomalous research literature and empirical field logs attribute sharp, boundary-contained cold spots to rapid endothermic energy absorption required for physical kinetic interaction across thresholds.',
           spectralPlausibilityScore: 89,
           environmentalParapsychologyDeduction: 'The synchronization of 18.98Hz infrasonic waves (the known ocular resonance frequency producing optical displacement and autonomic dread) with a zero-credential door latch disengagement strongly fits the profile of a conscious nocturnal presence seeking entry into the infant quarters.'
         },
