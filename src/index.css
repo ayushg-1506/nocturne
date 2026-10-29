@@ -1,27 +1,27 @@
 /* =========================================================================
    NOCTURNE - ENVIRONMENTAL TELEMETRY FORENSICS & REASONING ENGINE
-   Engineered Pure Black & Greenish-Black Precision Terminal Architecture
+   Engineered High-Contrast Pure Black & Sleek Dark Obsidian Palette
    ========================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Surface Layers: Pure Black Canvas & Dark Greenish-Black Containers */
+  /* Canvas: Pitch Black Background */
   --bg-deep: #000000;              /* Pure pitch black background */
-  --bg-surface: #030604;           /* Deep inset surfaces */
-  --bg-panel: #060b07;             /* Sleek dark greenish-black card container */
-  --bg-panel-hover: #0a120b;       /* Subtle card hover state */
-  --bg-card: #070d08;
-  --bg-card-hover: #0b150d;
+  --bg-surface: #040506;           /* Deep inset surfaces */
+  --bg-panel: #090a0d;             /* Sleek dark obsidian panel (neutral, clean) */
+  --bg-panel-hover: #101217;       /* Subtle card hover state */
+  --bg-card: #0b0c10;
+  --bg-card-hover: #12141a;
 
-  /* Tactical Borders (Dark Greenish-Black lines) */
-  --border-subtle: #122013;        /* Dark greenish-black border */
-  --border-muted: #192e1b;         /* Medium divider border */
-  --border-highlight: #223f25;     /* Subtle focus border */
+  /* Tactical Borders (Clean neutral graphite dividers, zero green sludge) */
+  --border-subtle: #171920;        /* Sleek neutral dark border */
+  --border-muted: #222530;         /* Medium divider border */
+  --border-highlight: #303544;     /* Focus border */
   --border-active: #22c55e;        /* Phosphor green border for active elements */
-  --border-amber: #3d2806;         /* Subtle amber alert border */
+  --border-amber: #3d2a06;         /* Subtle amber alert border */
   --border-amber-active: #f59e0b;  /* Active warning amber */
-  --border-crimson: #421212;
+  --border-crimson: #421414;
   --border-crimson-active: #ef4444;
 
   /* Phosphor Green Highlights (Targeted Accents Only) */
@@ -29,29 +29,29 @@
   --accent-green-bright: #4ade80;
   --accent-green-neon: #00ff66;
   --accent-green-tint: rgba(34, 197, 94, 0.08);
-  --accent-green-glow: rgba(34, 197, 94, 0.20);
+  --accent-green-glow: 0 0 16px -2px rgba(34, 197, 94, 0.25);
 
   /* Tactical Amber Highlights (Warnings / Anomaly States) */
   --accent-amber: #f59e0b;
   --accent-amber-bright: #fbbf24;
   --accent-amber-tint: rgba(245, 158, 11, 0.08);
-  --accent-amber-glow: rgba(245, 158, 11, 0.20);
+  --accent-amber-glow: 0 0 16px -2px rgba(245, 158, 11, 0.25);
 
   /* Alert Crimson (Critical Breaches) */
   --accent-crimson: #ef4444;
   --accent-crimson-bright: #f87171;
   --accent-crimson-tint: rgba(239, 68, 68, 0.08);
-  --accent-crimson-glow: rgba(239, 68, 68, 0.20);
+  --accent-crimson-glow: 0 0 16px -2px rgba(239, 68, 68, 0.25);
 
   /* Monospace Typography */
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Space Mono', 'Cascadia Code', Menlo, Monaco, monospace;
   --font-sans: 'JetBrains Mono', monospace;
 
-  /* High-Contrast Neutral & Accent Typography */
+  /* High-Contrast Neutral & Accent Typography (Boosted Visibility) */
   --text-primary: #ffffff;         /* Crisp pure white for titles & main headings */
-  --text-secondary: #e4e4e7;       /* Clean neutral silver for descriptions & paragraphs */
-  --text-muted: #71717a;           /* Neutral zinc for metadata, timestamps & labels */
-  --text-dim: #3f3f46;             /* Dark muted indicators */
+  --text-secondary: #d4d4d8;       /* Clean neutral silver for descriptions & paragraphs */
+  --text-muted: #9496a1;           /* Clearly legible zinc for labels, timestamps & metadata */
+  --text-dim: #71737e;             /* Clearly visible inactive navigation & secondary cues */
   
   --text-green: #4ade80;           /* Targeted phosphor green callouts & metrics */
   --text-amber: #fbbf24;           /* Targeted amber alerts */
@@ -60,8 +60,6 @@
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.9);
-  --shadow-glow-green: 0 0 16px -2px rgba(34, 197, 94, 0.25);
-  --shadow-glow-amber: 0 0 16px -2px rgba(245, 158, 11, 0.25);
 
   --transition-fast: 120ms ease;
   --transition-normal: 200ms ease;
@@ -76,6 +74,7 @@
 html, body {
   width: 100%;
   min-height: 100vh;
+  height: 100%;
   background-color: var(--bg-deep);
   color: var(--text-primary);
   font-family: var(--font-mono);
@@ -86,17 +85,22 @@ html, body {
   font-size: 13px;
 }
 
+#root {
+  width: 100%;
+  height: 100%;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #000000;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-muted);
-  border-radius: 1px;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-green);
@@ -157,7 +161,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #081409;
+  background: #0b150c;
   border: 1px solid var(--accent-green);
   color: #ffffff;
   padding: 6px 14px;
@@ -172,7 +176,7 @@ button {
   background: rgba(34, 197, 94, 0.22);
   color: #ffffff;
   border-color: var(--accent-green-bright);
-  box-shadow: var(--shadow-glow-green);
+  box-shadow: var(--accent-green-glow);
 }
 
 .btn-secondary {
@@ -180,7 +184,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #040804;
+  background: #0d0f14;
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   padding: 6px 12px;
@@ -192,7 +196,7 @@ button {
 }
 
 .btn-secondary:hover {
-  background: #081008;
+  background: #151821;
   border-color: var(--border-highlight);
   color: #ffffff;
 }
@@ -202,7 +206,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #140d04;
+  background: #181105;
   border: 1px solid var(--accent-amber);
   color: var(--accent-amber-bright);
   padding: 6px 12px;
@@ -216,7 +220,7 @@ button {
 .btn-amber:hover {
   background: rgba(245, 158, 11, 0.22);
   color: #ffffff;
-  box-shadow: var(--shadow-glow-amber);
+  box-shadow: var(--accent-amber-glow);
 }
 
 /* Badges */
@@ -224,8 +228,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(34, 197, 94, 0.08);
-  border: 1px solid rgba(34, 197, 94, 0.28);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.4);
   color: var(--accent-green-bright);
   padding: 2px 7px;
   border-radius: 2px;
@@ -239,8 +243,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   color: var(--accent-amber-bright);
   padding: 2px 7px;
   border-radius: 2px;
@@ -254,8 +258,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.28);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   color: var(--accent-crimson-bright);
   padding: 2px 7px;
   border-radius: 2px;
@@ -286,7 +290,7 @@ button {
 /* Inputs */
 input, textarea, select {
   font-family: var(--font-mono);
-  background: #020402;
+  background: #060709;
   border: 1px solid var(--border-subtle);
   color: #ffffff;
   border-radius: 2px;

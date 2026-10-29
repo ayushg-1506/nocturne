@@ -5,6 +5,7 @@ import { Thermometer, Mic, Zap, Cpu, Search, Table, LineChart } from 'lucide-rea
 
 interface TelemetryLabViewProps {
   readings: SensorReading[];
+  currentReading: SensorReading;
   currentMinute: number;
   totalMinutes: number;
   anomalies: DetectedAnomaly[];
@@ -13,6 +14,7 @@ interface TelemetryLabViewProps {
 
 export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
   readings,
+  currentReading,
   currentMinute,
   totalMinutes,
   anomalies,
@@ -40,10 +42,10 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
 
   return (
     <div style={{
-      margin: '0 16px 14px 16px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px'
+      gap: '12px',
+      minHeight: '100%'
     }}>
       {/* Sensor Statistics Cards */}
       <div style={{
@@ -61,13 +63,13 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           alignItems: 'center',
           gap: '10px'
         }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '2px', background: 'rgba(34, 197, 94, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '2px', background: '#09150b', border: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Thermometer size={16} color="var(--accent-green-bright)" />
           </div>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>THERMAL ENVELOPE</div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {minTemp.toFixed(1)}°C <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>to</span> {maxTemp.toFixed(1)}°C
+            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>THERMAL ENVELOPE</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>
+              {minTemp.toFixed(1)}°C <span style={{ fontSize: '11px', color: '#9ca3af' }}>to</span> {maxTemp.toFixed(1)}°C
             </div>
           </div>
         </div>
@@ -82,13 +84,13 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           alignItems: 'center',
           gap: '10px'
         }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '2px', background: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '2px', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Mic size={16} color="var(--accent-amber-bright)" />
           </div>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PEAK INFRASOUND SPL</div>
+            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>PEAK INFRASOUND SPL</div>
             <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-amber-bright)' }}>
-              {maxDb.toFixed(1)} dB <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>(18.98Hz Lock)</span>
+              {maxDb.toFixed(1)} dB <span style={{ fontSize: '11px', color: '#9ca3af' }}>(18.98Hz Lock)</span>
             </div>
           </div>
         </div>
@@ -103,13 +105,13 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           alignItems: 'center',
           gap: '10px'
         }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '2px', background: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '2px', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Zap size={16} color="var(--accent-amber-bright)" />
           </div>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>MAX EMF INDUCTION</div>
+            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>MAX EMF INDUCTION</div>
             <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-amber-bright)' }}>
-              {maxEmf.toFixed(2)} µT <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>(Base: 0.25)</span>
+              {maxEmf.toFixed(2)} µT <span style={{ fontSize: '11px', color: '#9ca3af' }}>(Base: 0.25)</span>
             </div>
           </div>
         </div>
@@ -124,13 +126,13 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           alignItems: 'center',
           gap: '10px'
         }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '2px', background: 'rgba(239, 68, 68, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '2px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Cpu size={16} color="var(--accent-crimson-bright)" />
           </div>
           <div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PEAK CIRCUIT POWER</div>
+            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600 }}>PEAK CIRCUIT POWER</div>
             <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-crimson-bright)' }}>
-              {maxWatt.toFixed(0)} W <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>[SURGE]</span>
+              {maxWatt.toFixed(0)} W <span style={{ fontSize: '11px', color: '#9ca3af' }}>[SURGE]</span>
             </div>
           </div>
         </div>
@@ -142,25 +144,25 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           <button
             onClick={() => setViewMode('charts')}
             className={viewMode === 'charts' ? 'btn-primary' : 'btn-secondary'}
-            style={{ padding: '5px 12px', fontSize: '11px' }}
+            style={{ padding: '6px 14px', fontSize: '11px' }}
           >
-            <LineChart size={13} />
+            <LineChart size={14} />
             <span>[ WAVEFORM CURVES ]</span>
           </button>
 
           <button
             onClick={() => setViewMode('table')}
             className={viewMode === 'table' ? 'btn-primary' : 'btn-secondary'}
-            style={{ padding: '5px 12px', fontSize: '11px' }}
+            style={{ padding: '6px 14px', fontSize: '11px' }}
           >
-            <Table size={13} />
+            <Table size={14} />
             <span>[ RAW SENSOR TABLE ]</span>
           </button>
         </div>
 
         {viewMode === 'table' && (
-          <div style={{ position: 'relative', width: '240px' }}>
-            <Search size={13} color="var(--text-muted)" style={{ position: 'absolute', left: '8px', top: '7px' }} />
+          <div style={{ position: 'relative', width: '260px' }}>
+            <Search size={14} color="#9ca3af" style={{ position: 'absolute', left: '10px', top: '8px' }} />
             <input
               type="text"
               placeholder="Search timestamp / latch..."
@@ -168,7 +170,7 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
               onChange={e => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                paddingLeft: '26px',
+                paddingLeft: '28px',
                 fontSize: '11px'
               }}
             />
@@ -180,6 +182,7 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
       {viewMode === 'charts' ? (
         <TelemetryCharts
           readings={readings}
+          currentReading={currentReading}
           currentMinute={currentMinute}
           totalMinutes={totalMinutes}
           anomalies={anomalies}
@@ -190,21 +193,22 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
           background: 'var(--bg-panel)',
           border: '1px solid var(--border-subtle)',
           borderRadius: '2px',
-          padding: '12px',
-          overflowX: 'auto'
+          padding: '14px',
+          overflowX: 'auto',
+          flex: 1
         }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
             <thead>
-              <tr style={{ background: '#040804', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
-                <th style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>TIMESTAMP</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-green-bright)' }}>TEMP (°C)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--text-secondary)' }}>HUMIDITY (%)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-amber-bright)' }}>SOUND (dB)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-amber-bright)' }}>FREQ (Hz)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-crimson-bright)' }}>EMF (µT)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-crimson-bright)' }}>POWER (W)</th>
-                <th style={{ padding: '6px 10px', color: 'var(--accent-green-bright)' }}>PORTAL</th>
-                <th style={{ padding: '6px 10px', color: 'var(--text-muted)' }}>ACTION</th>
+              <tr style={{ background: '#050608', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>TIMESTAMP</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>TEMP (°C)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>HUMIDITY (%)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>SOUND (dB)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>FREQ (Hz)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>EMF (µT)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>POWER (W)</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>PORTAL</th>
+                <th style={{ padding: '8px 12px', color: '#d4d4d8', fontWeight: 600 }}>ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -220,39 +224,42 @@ export const TelemetryLabView: React.FC<TelemetryLabViewProps> = ({
                       cursor: 'pointer'
                     }}
                   >
-                    <td style={{ padding: '6px 10px', fontWeight: isCurrent ? 700 : 400, color: isCurrent ? 'var(--accent-green-bright)' : 'var(--text-primary)' }}>
+                    <td style={{ padding: '8px 12px', fontWeight: isCurrent ? 700 : 400, color: isCurrent ? 'var(--accent-green-bright)' : '#ffffff' }}>
                       {r.timestamp}
                     </td>
-                    <td style={{ padding: '6px 10px', color: r.temperatureC < 16.0 ? 'var(--accent-amber-bright)' : 'inherit', fontWeight: r.temperatureC < 16.0 ? 700 : 400 }}>
+                    <td style={{ padding: '8px 12px', color: r.temperatureC < 16.0 ? 'var(--accent-amber-bright)' : '#ffffff', fontWeight: r.temperatureC < 16.0 ? 700 : 400 }}>
                       {r.temperatureC.toFixed(1)}°C
                     </td>
-                    <td style={{ padding: '6px 10px', color: 'var(--text-secondary)' }}>
+                    <td style={{ padding: '8px 12px', color: '#d4d4d8' }}>
                       {r.humidityPct.toFixed(1)}%
                     </td>
-                    <td style={{ padding: '6px 10px', color: r.acousticDb > 35 ? 'var(--accent-amber-bright)' : 'inherit', fontWeight: r.acousticDb > 35 ? 700 : 400 }}>
-                      {r.acousticDb.toFixed(1)} dB
+                    <td style={{ padding: '8px 12px', color: r.acousticDb > 35 ? 'var(--accent-amber-bright)' : '#d4d4d8' }}>
+                      {r.acousticDb.toFixed(1)}
                     </td>
-                    <td style={{ padding: '6px 10px', color: r.acousticFreqHz >= 18 && r.acousticFreqHz <= 20 ? 'var(--accent-crimson-bright)' : 'inherit' }}>
-                      {r.acousticFreqHz.toFixed(2)} Hz
+                    <td style={{ padding: '8px 12px', color: r.acousticFreqHz >= 18 && r.acousticFreqHz <= 20 ? 'var(--accent-amber-bright)' : '#9ca3af' }}>
+                      {r.acousticFreqHz.toFixed(1)}
                     </td>
-                    <td style={{ padding: '6px 10px', color: r.emfFluxUtd > 3.0 ? 'var(--accent-crimson-bright)' : 'inherit', fontWeight: r.emfFluxUtd > 3.0 ? 700 : 400 }}>
-                      {r.emfFluxUtd.toFixed(2)} µT
+                    <td style={{ padding: '8px 12px', color: r.emfFluxUtd > 3 ? 'var(--accent-crimson-bright)' : '#d4d4d8' }}>
+                      {r.emfFluxUtd.toFixed(2)}
                     </td>
-                    <td style={{ padding: '6px 10px', color: r.powerWattage > 500 ? 'var(--accent-crimson-bright)' : 'inherit', fontWeight: r.powerWattage > 500 ? 700 : 400 }}>
-                      {r.powerWattage.toFixed(1)} W
+                    <td style={{ padding: '8px 12px', color: r.powerWattage > 1000 ? 'var(--accent-crimson-bright)' : '#d4d4d8' }}>
+                      {r.powerWattage.toFixed(0)}
                     </td>
-                    <td style={{ padding: '6px 10px' }}>
-                      <span className={r.doorLatchState === 'SECURE' ? 'badge-green' : 'badge-crimson'} style={{ fontSize: '9px', padding: '1px 5px' }}>
+                    <td style={{ padding: '8px 12px' }}>
+                      <span className={r.doorLatchState === 'SECURE' ? 'badge-green' : 'badge-crimson'}>
                         {r.doorLatchState}
                       </span>
                     </td>
-                    <td style={{ padding: '6px 10px' }}>
+                    <td style={{ padding: '8px 12px' }}>
                       <button
-                        onClick={(e) => { e.stopPropagation(); onSeek(r.epochMinutes); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSeek(r.epochMinutes);
+                        }}
                         className="btn-secondary"
-                        style={{ padding: '2px 6px', fontSize: '10px' }}
+                        style={{ padding: '3px 8px', fontSize: '10px' }}
                       >
-                        [ SEEK ]
+                        SEEK
                       </button>
                     </td>
                   </tr>

@@ -79,7 +79,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        background: '#040804',
+        background: '#07080b',
         border: '1px solid var(--border-subtle)',
         borderRadius: '2px',
         padding: '4px 10px',
@@ -194,7 +194,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           value={selectedCaseId}
           onChange={(e) => onSelectCase(e.target.value)}
           style={{
-            background: '#040804',
+            background: '#07080b',
             borderColor: 'var(--border-subtle)',
             color: 'var(--text-primary)',
             fontSize: '11px',

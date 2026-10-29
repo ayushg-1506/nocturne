@@ -124,7 +124,7 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
       <div style={{
         position: 'relative',
         width: '100%',
-        height: '150px',
+        height: '210px',
         background: '#020502',
         borderRadius: '2px',
         border: '1px solid var(--border-subtle)',
@@ -133,7 +133,7 @@ export const SpectralScope: React.FC<SpectralScopeProps> = ({
         <canvas
           ref={canvasRef}
           width={400}
-          height={150}
+          height={210}
           style={{ width: '100%', height: '100%', display: 'block' }}
         />
 

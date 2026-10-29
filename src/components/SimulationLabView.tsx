@@ -125,7 +125,7 @@ export const SimulationLabView: React.FC<SimulationLabViewProps> = ({
 
   return (
     <div style={{
-      margin: '0 16px 14px 16px',
+      
       display: 'flex',
       flexDirection: 'column',
       gap: '12px'

@@ -221,6 +221,7 @@ export const App: React.FC = () => {
           {activeSection === 'telemetry' && (
             <TelemetryLabView
               readings={activeCase.readings}
+              currentReading={currentReading}
               currentMinute={currentMinute}
               totalMinutes={totalMinutes}
               anomalies={activeCase.anomalies}
