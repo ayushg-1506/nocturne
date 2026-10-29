@@ -175,8 +175,9 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
 
                 {/* Room Label: Crisp White */}
                 <text
-                  x={room.x + 12}
+                  x={isNarrow ? room.x + room.width / 2 : room.x + 12}
                   y={room.y + 22}
+                  textAnchor={isNarrow ? "middle" : "start"}
                   fill={isHotZone && isColdAnomaly ? 'var(--accent-amber-bright)' : '#ffffff'}
                   fontSize={isNarrow ? "10" : "11"}
                   fontWeight="700"
@@ -189,7 +190,7 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
                 {/* Sensor tags within room (Rendered as clean mini badge chips that never overflow) */}
                 <g transform={`translate(${room.x + 12}, ${room.y + 36})`}>
                   {room.sensorIds.map((sid: string, idx: number) => {
-                    const tagX = isNarrow ? 0 : idx * 62;
+                    const tagX = isNarrow ? Math.round((room.width - 54) / 2) : idx * 62;
                     const tagY = isNarrow ? idx * 20 : 0;
                     return (
                       <g key={sid} transform={`translate(${tagX}, ${tagY})`}>
@@ -258,7 +259,7 @@ export const FloorplanView: React.FC<FloorplanViewProps> = ({
           })}
 
           {/* Door Latch Sensor Graphic: Positioned cleanly between Master Suite and Corridor */}
-          <g transform="translate(245, 105)">
+          <g transform="translate(245, 145)">
             <rect
               x="-6"
               y="-10"

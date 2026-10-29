@@ -238,17 +238,15 @@ export const App: React.FC = () => {
 
           {activeSection === 'spectral' && (
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(340px, 1fr) minmax(320px, 1fr)',
+              display: 'flex',
+              flexDirection: 'column',
               gap: '12px'
             }}>
-              <div>
-                <SpectralScope
-                  currentReading={currentReading}
-                  isAudioOn={isAudioOn}
-                  onToggleAudio={handleToggleAudio}
-                />
-              </div>
+              <SpectralScope
+                currentReading={currentReading}
+                isAudioOn={isAudioOn}
+                onToggleAudio={handleToggleAudio}
+              />
 
               <div style={{
                 background: 'var(--bg-panel)',
@@ -259,37 +257,100 @@ export const App: React.FC = () => {
                 flexDirection: 'column',
                 gap: '12px'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Cpu size={15} color="var(--accent-amber-bright)" />
-                  <span className="terminal-title">
-                    18.98Hz OCULAR RESONANCE ANALYSIS
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Cpu size={16} color="var(--accent-amber-bright)" />
+                    <span className="terminal-title">
+                      18.98Hz OCULAR RESONANCE &amp; ACOUSTIC PHYSICS ANALYSIS
+                    </span>
+                  </div>
+                  <span className="badge-amber" style={{ fontSize: '10px' }}>
+                    VIC TANDY INFRASONIC LABORATORY BENCHMARK
                   </span>
                 </div>
 
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  <p style={{ marginBottom: '8px' }}>
-                    In 1998, British engineer Vic Tandy discovered that an extractor fan in a medical research laboratory was producing an imperceptible acoustic standing wave at <strong>18.98 Hz</strong>.
-                  </p>
-                  <p style={{ marginBottom: '8px' }}>
-                    The human eyeball's resonant frequency is approximately <strong>18.9 Hz</strong>. Acoustic waves at this frequency vibrate the eyeball cornea, inducing optical displacement illusions (shadowy peripheral vision artifacts), accompanied by hyperventilation and localized chills.
-                  </p>
-                  <p>
-                    Nocturne isolates this frequency from background noise to determine whether sightings correspond to structural pipe vibration, or unclassified environmental anomalies.
-                  </p>
-                </div>
-
                 <div style={{
-                  background: '#040804',
-                  padding: '10px 12px',
-                  borderRadius: '2px',
-                  border: '1px solid var(--border-subtle)',
-                  marginTop: 'auto'
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gap: '12px'
                 }}>
-                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>
-                    CURRENT ACOUSTIC SPECTRUM READING:
+                  {/* Column 1: Historical Scientific Discovery */}
+                  <div style={{
+                    background: '#040507',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '2px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px'
+                  }}>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff' }}>
+                      [01] THE 1998 COVENTRY DISCOVERY
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#d4d4d8', lineHeight: 1.6 }}>
+                      In 1998, British engineer Vic Tandy discovered that an unshielded extractor fan in a medical research laboratory was producing an imperceptible standing wave at <strong>18.98 Hz</strong>.
+                      The human eyeball's resonant frequency is approximately <strong>18.9 Hz</strong>. Acoustic waves at this frequency vibrate the eyeball cornea, inducing peripheral optical displacement illusions (shadowy vision artifacts) accompanied by localized chills and hyperventilation.
+                    </div>
                   </div>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
-                    {currentReading.acousticFreqHz.toFixed(2)} Hz @ {currentReading.acousticDb.toFixed(1)} dB
+
+                  {/* Column 2: Architectural Standing Wave Physics */}
+                  <div style={{
+                    background: '#040507',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '2px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px'
+                  }}>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff' }}>
+                      [02] STANDING WAVE GEOMETRY (f = v / 2L)
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#d4d4d8', lineHeight: 1.6 }}>
+                      With speed of sound in air at 20°C equal to <strong>343 m/s</strong>, an architectural corridor or duct plenum of length <strong>9.03 meters</strong> forms an acoustic cavity whose fundamental standing resonance is precisely:
+                      <div style={{ margin: '6px 0', padding: '6px 10px', background: '#090a0d', border: '1px solid var(--border-subtle)', borderRadius: '2px', color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
+                        f₀ = 343 / (2 × 9.03) = 18.98 Hz
+                      </div>
+                      Nocturne cross-checks dimensional resonance to separate mechanical pipe vibration from anomalous acoustic phenomena.
+                    </div>
+                  </div>
+
+                  {/* Column 3: Real-Time Sensor Lock Status */}
+                  <div style={{
+                    background: '#040507',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '2px',
+                    padding: '12px 14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    justifyContent: 'space-between'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#ffffff' }}>
+                        [03] REAL-TIME ACOUSTIC SENSOR VECTOR
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '4px' }}>
+                        Live microphone and infrasound transducer lock:
+                      </div>
+                    </div>
+
+                    <div style={{
+                      padding: '10px 12px',
+                      background: '#090a0d',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '2px'
+                    }}>
+                      <div style={{ fontSize: '10px', color: '#9ca3af', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>
+                        CURRENT ACOUSTIC SPECTRUM:
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--accent-amber-bright)', fontFamily: 'var(--font-mono)' }}>
+                        {currentReading.acousticFreqHz.toFixed(2)} Hz @ {currentReading.acousticDb.toFixed(1)} dB
+                      </div>
+                      <div style={{ fontSize: '10px', color: 'var(--accent-green-bright)', marginTop: '4px', fontFamily: 'var(--font-mono)' }}>
+                        SNR: +18.4 dB over domestic floor
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
